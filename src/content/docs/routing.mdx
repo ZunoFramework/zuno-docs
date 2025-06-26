@@ -1,0 +1,73 @@
+---
+title: Routing
+description: Learn how Zuno handles HTTP routing with clear syntax and full control.
+---
+
+# 🛣️ Routing in Zuno
+
+Routing is at the core of every Zuno application. Each route defines a handler that responds to a specific HTTP method and path.
+
+---
+
+## 🔧 Basic Route Handlers
+
+You can define routes using `app.get()`, `app.post()`, and other HTTP method-specific functions.
+
+```cpp
+app.get("/", [](const zuno::Request&, zuno::Response& res) {
+  res.send("Welcome to Zuno!");
+});
+
+app.post("/submit", [](const zuno::Request&, zuno::Response& res) {
+  res.send("Data received.");
+});
+```
+
+---
+
+## 📍 Route Parameters
+
+Zuno supports route parameters using a simple `:name` syntax.
+
+```cpp
+app.get("/users/:id", [](const zuno::Request& req, zuno::Response& res) {
+  auto userId = req.params["id"];
+  res.send("User ID is: " + userId);
+});
+```
+
+The `req.params` map contains all route variables parsed from the path.
+
+---
+
+## 🧩 Chaining Routes
+
+You can register multiple routes and Zuno will match them in the order they are declared.
+
+```cpp
+app.get("/status", statusHandler);
+app.get("/health", healthCheckHandler);
+```
+
+---
+
+## 🔁 Redirects
+
+Quickly redirect a request to another route:
+
+```cpp
+app.get("/old", [](const zuno::Request&, zuno::Response& res) {
+  res.redirect("/new");
+});
+```
+
+---
+
+## ✅ Next Steps
+
+- Explore [Middleware](/docs/middleware)
+- Customize [Responses](/docs/response)
+
+---
+
+Routing in Zuno is fast, predictable, and expressive—built to give you confidence and control from your first handler to your full server.

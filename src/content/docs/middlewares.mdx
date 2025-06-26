@@ -1,0 +1,80 @@
+---
+title: Middleware
+description: Learn how to use and write middleware functions in Zuno to transform requests and responses.
+---
+
+# 🧩 Middleware in Zuno
+
+Middleware functions are one of Zuno’s core building blocks. They allow you to inspect, modify, or short-circuit the request–response cycle.
+
+---
+
+## 🔁 Writing Your First Middleware
+
+A middleware in Zuno is a function with the signature:
+
+```cpp
+void(Request& req, Response& res, Next next)
+```
+
+You can register middleware globally:
+
+```cpp
+app.use([](zuno::Request& req, zuno::Response& res, zuno::Next next) {
+  std::cout << "Request to " << req.path << std::endl;
+  next(); // Pass control to the next middleware or handler
+});
+```
+
+---
+
+## ✂️ Ending the Chain Early
+
+A middleware can choose not to call `next()` and instead send a response immediately:
+
+```cpp
+app.use([](zuno::Request&, zuno::Response& res, zuno::Next) {
+  res.status(403).send("Access denied.");
+  // No next(): terminates the chain
+});
+```
+
+---
+
+## 🎯 Route-Specific Middleware
+
+You can add middleware for specific routes:
+
+```cpp
+app.get("/admin", [](zuno::Request&, zuno::Response& res, zuno::Next next) {
+  res.setHeader("X-Special", "true");
+  next();
+}, [](const zuno::Request&, zuno::Response& res) {
+  res.send("Hello admin!");
+});
+```
+
+This allows you to stack middleware per route.
+
+---
+
+## ⚡ Use Case: JSON Logging Middleware
+
+Here's an example of reusable logging middleware:
+
+```cpp
+zuno::Middleware logger = [](zuno::Request& req, zuno::Response&, zuno::Next next) {
+  std::cout << "[LOG] " << req.method << " " << req.path << std::endl;
+  next();
+};
+
+app.use(logger);
+```
+
+---
+
+Middleware gives you precision and flow control at every layer. Whether validating input, modifying headers, or handling authentication, Zuno’s middleware system stays expressive and low-overhead.
+
+---
+
+**Next:** Explore [Response customization](/docs/response).

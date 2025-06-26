@@ -1,0 +1,49 @@
+---
+title: Introduction
+description: Discover what Zuno is and why it's a different kind of HTTP framework for C++.
+---
+
+# 🧠 What is Zuno?
+
+**Zuno** is a lightweight HTTP framework for C++ that prioritizes _true performance_, expressive simplicity, and full developer control. Inspired by the elegance of Express.js and the raw power of C++, Zuno is ideal for:
+
+- Blazingly fast REST APIs
+- Embedded servers on limited-resource systems
+- Projects where every millisecond matters
+
+## 🚀 Key Features
+- 🔁 Chainable middleware, Express-style
+- 🛠️ Simple yet powerful routing
+- 🧩 Optional extensions like Brotli compression and static serve
+- 🧵 Ready for asynchronous systems via ASIO
+
+```cpp
+app.get("/hello", [](Request&, Response& res) {
+  res.send("Hello, Zuno!");
+});
+```
+
+## 📚 How to Use This Documentation
+
+This guide is structured to help you:
+
+- 🟢 Get started in minutes
+- 🔍 Quickly reference routes, responses, and middleware
+- 🧪 Learn how to test handlers without running a full server
+- ⚙️ Dive into advanced features like streaming and conditional headers
+> If you're new to Zuno, we recommend starting with the _Getting Started_ section.
+
+## 📦 Quick Installation
+
+```bash
+git clone https://github.com/ZunoFramework/zuno.git
+cd zuno
+cmake -B build
+cmake --build build
+./build/zuno-example
+```
+## 💬 Have Questions?
+
+Find us on the [official repository](https://github.com/ZunoFramework/zuno.git) or join the community (Discord coming soon).
+
+> This documentation lives and evolves with the community. Contributions are welcome!

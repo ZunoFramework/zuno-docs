@@ -1,0 +1,86 @@
+---
+title: Getting Started
+description: Set up Zuno, run your first server, and understand its core structure.
+---
+
+# 🚀 Getting Started with Zuno
+
+This guide will walk you through installing Zuno, building your first server, and understanding the basics of how the framework works.
+
+---
+
+## 📦 1. Install Zuno
+
+Zuno is written in C++ and uses CMake as its build system. Clone the repository and build it locally:
+
+```bash
+mkdir include
+cd include/
+git clone https://github.com/ZunoFramework/zuno.git
+cd zuno
+cmake -B build
+cmake --build build
+./zuno-example # To run Zuno example
+```
+
+This should build and run the default example server.
+
+---
+
+## 🧭 2. Create a basic Zuno app
+
+Create a file called `main.cpp`:
+
+```cpp
+#include <zuno/zuno.hpp>;
+
+int main() {
+  zuno::App app;
+
+  app.get("/", [](const zuno::Request&, zuno::Response& res) {
+    res.send("Hello, world from Zuno!");
+  });
+
+  app.listen(3000);
+}
+```
+
+Then compile:
+
+```bash
+g++ main.cpp -std=c++20 -o myserver -I./include -L./lib -lzuno -lpthread
+./myserver
+```
+
+Open your browser to `http://localhost:3000`.
+
+---
+
+## 🧩 3. Explore Middleware and Routing
+
+Add another route:
+
+```cpp
+app.use([](zuno::Request& req, zuno::Response& res, zuno::Next next) {
+  std::cout << "Request received for " << req.path << std::endl;
+  next();
+});
+
+app.get("/about", [](const zuno::Request&, zuno::Response& res) {
+  res.send("Zuno is alive!");
+});
+```
+
+This demonstrates how middleware and routing interact.
+
+---
+
+## 📚 Next Steps
+
+- Learn more about [Routing](/docs/routing)
+- Understand [Response customization](/docs/response)
+- Explore [Middleware patterns](/docs/middleware)
+
+---
+
+Ready to go deeper? Zuno awaits at full speed.

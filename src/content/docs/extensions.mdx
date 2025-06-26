@@ -1,0 +1,75 @@
+---
+title: Extensions
+description: Learn about Zuno’s built-in middleware extensions and how to use them.
+---
+
+# 🧩 Zuno Extensions
+
+Zuno includes optional middleware components to enhance functionality without adding complexity. These extensions help you compress, secure, and scale your app.
+
+---
+
+## 🌀 Brotli Compression
+
+Reduces response size using Brotli if the client supports it:
+
+```cpp
+app.use(zuno::compression());
+```
+
+By default, responses are compressed only if they reduce size by 20% or more (`0.8` ratio). You can customize this threshold:
+
+```cpp
+app.use(zuno::compression(0.7)); // Accept smaller gains
+```
+
+✅ Sets `Content-Encoding: br` and respects `Accept-Encoding`.
+
+---
+
+## 🌐 CORS
+
+Allows cross-origin requests (great for SPAs and frontend development):
+
+```cpp
+app.use(zuno::cors());
+```
+
+Default behavior:
+
+- Allows all origins
+- Methods: `GET, POST, PUT, DELETE, OPTIONS`
+- Headers: `Content-Type`
+
+Customize if needed:
+
+```cpp
+app.use(zuno::cors({
+  .origin = "https://myfrontend.dev",
+  .methods = "GET, POST",
+  .headers = "Content-Type, Authorization"
+}));
+```
+
+---
+
+## 🚦 Rate Limiting
+
+Limit the number of requests per client/IP in a given timeframe:
+
+```cpp
+app.use(zuno::rateLimit({
+  .max = 100,
+  .intervalMs = 60000
+}));
+```
+
+Useful for API protection and abuse mitigation.
+
+---
+
+Zuno extensions help you scale while keeping control. They’re modular by design—add only what you need and keep your server fast and focused.
+
+---
+
+**What’s next?** Consider writing your own middleware or exploring advanced topics like headers, streaming, or asynchronous response flows.
