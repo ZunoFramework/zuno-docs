@@ -1,86 +1,102 @@
 ---
-title: Getting Started
-description: Set up Zuno, run your first server, and understand its core structure.
+title: 🚀 Getting Started
+description: Set up your first Zuno app from scratch using CMake and FetchContent.
 ---
 
-# 🚀 Getting Started with Zuno
+import { Code } from '@astrojs/starlight/components';
 
-This guide will walk you through installing Zuno, building your first server, and understanding the basics of how the framework works.
-
----
-
-## 📦 1. Install Zuno
-
-Zuno is written in C++ and uses CMake as its build system. Clone the repository and build it locally:
-
-```bash
-mkdir include
-cd include/
-git clone https://github.com/ZunoFramework/zuno.git
-cd zuno
-cmake -B build
-cmake --build build
-./zuno-example # To run Zuno example
-```
-
-This should build and run the default example server.
+Zuno is a modern C++ web framework designed for performance, modularity, and developer ergonomics. This guide walks you through setting up a minimal Zuno project using **CMake** and **FetchContent**.
 
 ---
 
-## 🧭 2. Create a basic Zuno app
+## 🧰 Prerequisites
 
-Create a file called `main.cpp`:
+Before you begin, make sure you have the following installed:
 
-```cpp
-#include <zuno/zuno.hpp>;
+- **C++20 compatible compiler** (e.g. GCC ≥ 10, Clang ≥ 12, MSVC ≥ 2019)
+- **CMake ≥ 3.20**
+- **Git** (for FetchContent)
+
+---
+
+## 📁 Project Structure
+
+Create a new folder for your project:
+
+<Code lang="bash" code={`mkdir zuno-hello && cd zuno-hello`} />
+
+Inside, create the following structure:
+
+<Code lang="plaintext" code={`zuno-hello/
+├── CMakeLists.txt
+└── main.cpp`} />
+
+---
+
+## ⚙️ CMake Configuration
+
+Use `FetchContent` to download and integrate Zuno automatically:
+
+<Code title="CMakeLists.txt" lang="cmake" code={`cmake_minimum_required(VERSION 3.20)
+project(zuno-hello)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main  # Or use a specific version tag
+)
+
+FetchContent_MakeAvailable(zuno)
+
+add_executable(zuno-hello main.cpp)
+target_link_libraries(zuno-hello PRIVATE zuno::zuno)`} />
+
+---
+
+## 📝 Hello World in C++
+
+Now create your `main.cpp` file with a basic server:
+
+<Code title="main.cpp" lang="cpp" code={`#include <zuno/zuno.hpp>
 
 int main() {
   zuno::App app;
 
-  app.get("/", [](const zuno::Request&, zuno::Response& res) {
+  app.get("/", [](auto req, auto res) {
     res.send("Hello, world from Zuno!");
   });
 
-  app.listen(3000);
-}
-```
-
-Then compile:
-
-```bash
-g++ main.cpp -std=c++20 -o myserver -I./include -L./lib -lzuno -lpthread
-./myserver
-```
-
-Open your browser to `http://localhost:3000`.
+  app.listen(8080);
+}`} />
 
 ---
 
-## 🧩 3. Explore Middleware and Routing
+## 🛠️ Build and Run
 
-Add another route:
+From the root of your project:
 
-```cpp
-app.use([](zuno::Request& req, zuno::Response& res, zuno::Next next) {
-  std::cout << "Request received for " << req.path << std::endl;
-  next();
-});
+<Code lang="bash" code={`cmake -B build
+cmake --build build
+./build/zuno-hello`} />
 
-app.get("/about", [](const zuno::Request&, zuno::Response& res) {
-  res.send("Zuno is alive!");
-});
-```
+Then open your browser and visit [http://localhost:8080](http://localhost:8080) — you should see:
 
-This demonstrates how middleware and routing interact.
+<Code lang="plaintext" code={`Hello, world from Zuno!`} />
 
 ---
 
-## 📚 Next Steps
+## ✅ You're Up and Running!
 
-- Learn more about [Routing](/docs/routing)
-- Understand [Response customization](/docs/response)
-- Explore [Middleware patterns](/docs/middleware)
+You now have your first Zuno server live. From here, you can:
 
----
+- Add more routes
+- Integrate middleware
+- Enable TLS
+- Modularize your app
 
-Ready to go deeper? Zuno awaits at full speed.
+👉 Continue to the [Architecture Overview](/docs/architecture) to understand how Zuno works under the hood.

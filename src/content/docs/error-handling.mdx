@@ -1,0 +1,89 @@
+---
+title: ⚠️ Error Handling
+description: Gracefully handle exceptions and invalid input in your Zuno applications.
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+Zuno gives you full control over how errors are handled in your application. You can catch exceptions, return custom error responses, and use middleware to centralize error logic.
+
+---
+
+## 🧯 Try/Catch in Middleware
+
+The simplest way to catch unexpected exceptions is to wrap your middleware or route logic in a `try/catch` block:
+
+<Code title="error-middleware.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  try {
+    next(); // Proceed to next middleware or route
+  } catch (const std::exception& e) {
+    res.status(500).send("Internal Server Error");
+  }
+});`} />
+
+This ensures that any unhandled exception in downstream logic is caught and responded to gracefully.
+
+---
+
+## 🧪 Catching Errors in Routes
+
+You can also catch exceptions directly inside route handlers:
+
+<Code title="route-error.cpp" lang="cpp" code={`app.get("/fail", [](auto req, auto res) {
+  try {
+    throw std::runtime_error("Something went wrong");
+  } catch (const std::exception& e) {
+    res.status(500).send(std::string("Error: ") + e.what());
+  }
+});`} />
+
+This gives you more control over the response content and status code.
+
+---
+
+## 🧰 Custom Error Responses
+
+You can build structured error responses using JSON or plain text:
+
+<Code title="json-error.cpp" lang="cpp" code={`app.get("/json-error", [](auto req, auto res) {
+  res.status(400)
+     .json({{"error","Invalid input"}, {"code": 400}});
+});`} />
+
+---
+
+## 🧱 Centralized Error Middleware
+
+For larger applications, it's a good idea to centralize error handling in a top-level middleware:
+
+<Code title="global-error.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  try {
+    next();
+  } catch (const std::exception& e) {
+    res.status(500)
+       .set("Content-Type", "text/plain")
+       .send("Unhandled exception: " + std::string(e.what()));
+  }
+});`} />
+
+This pattern ensures consistent error formatting across your app.
+
+---
+
+## 🧠 Best Practices
+
+- Always validate input before using it.
+- Avoid exposing internal error messages in production.
+- Use structured error responses (e.g. JSON) for APIs.
+- Log errors for debugging and monitoring.
+- Catch exceptions at the outermost layer to prevent crashes.
+
+---
+
+## 🔍 Next Steps
+
+Now that you know how to handle errors, you can explore:
+
+- [Deployment](/deployment) — Prepare your app for production environments.
+- [Middleware](/middleware) — Use middleware to enforce validation and security.
+- [TLS Integration](/tls) — Handle TLS handshake failures and client certificate issues.

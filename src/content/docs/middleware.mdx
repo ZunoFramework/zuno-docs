@@ -1,0 +1,138 @@
+---
+title: 🧰 Middleware
+description: Add reusable logic to your request pipeline using middleware functions.
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+Middleware functions in Zuno allow you to intercept and process HTTP requests before they reach the final route handler. They are powerful tools for implementing cross-cutting concerns like logging, authentication, input validation, and error handling.
+
+---
+
+## ⚙️ What is Middleware?
+
+A middleware is a function that receives three arguments:
+
+- `req`: the incoming request
+- `res`: the response object
+- `next`: a function that passes control to the next middleware or route
+
+<Code title="basic-logging.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  std::cout << "[LOG] " << req.method() << " " << req.path() << std::endl;
+  next(); // Pass control to the next middleware or route
+});`} />
+
+---
+
+## 🧵 Execution Order
+
+Middlewares are executed in the order they are registered. If a middleware does not call `next()`, the request will not proceed to the next handler.
+
+<Code title="block-request.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  if (req.path() == "/blocked") {
+    res.status(403).send("Access denied");
+    return;
+  }
+  next();
+});`} />
+
+---
+
+## 🔐 Authentication Example
+
+You can use middleware to enforce authentication logic before allowing access to protected routes. This example checks for a bearer token in the `Authorization` header:
+
+<Code title="auth.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  auto token = req.header("Authorization");
+  if (token != "Bearer secret-token") {
+    res.status(401).send("Unauthorized");
+    return;
+  }
+  next();
+});`} />
+
+---
+
+## 🔍 Using Query Parameters in Middleware
+
+Since Zuno supports `req.query()`, you can access query parameters directly in your middleware logic:
+
+<Code title="query-check.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  auto debug = req.query("debug");
+  if (debug == "true") {
+    std::cout << "[DEBUG] Request to " << req.path() << std::endl;
+  }
+  next();
+});`} />
+
+---
+
+## 🧪 Middleware + Routes
+
+Middleware runs before any matching route. You can combine them to build clean, layered logic:
+
+<Code title="combined.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  std::cout << "Incoming: " << req.method() << " " << req.path() << std::endl;
+  next();
+});
+
+app.get("/hello", [](auto req, auto res) {
+  res.send("Hello, world!");
+});`} />
+
+---
+
+## 🧰 Reusable Middleware Functions
+
+You can define middleware as reusable functions and apply them globally or conditionally:
+
+<Code title="middleware-utils.cpp" lang="cpp" code={`auto log_requests = [](auto req, auto res, auto next) {
+  std::cout << "[LOG] " << req.method() << " " << req.path() << std::endl;
+  next();
+};
+
+app.use(log_requests);`} />
+
+---
+
+## 🧱 Middleware Stack Internals
+
+Zuno maintains an internal stack of middleware functions. When a request is received:
+
+1. The first middleware is called.
+2. If it calls `next()`, the next middleware is invoked.
+3. Once all middleware has run, the matching route handler is executed.
+4. If no route matches, a 404 response is returned.
+
+---
+
+## ⚠️ Error Handling in Middleware
+
+You can wrap your logic in `try/catch` blocks to handle exceptions gracefully:
+
+<Code title="error-handling.cpp" lang="cpp" code={`app.use([](auto req, auto res, auto next) {
+  try {
+    next();
+  } catch (const std::exception& e) {
+    res.status(500).send("Internal Server Error");
+  }
+});`} />
+
+---
+
+## 🧪 Middleware Best Practices
+
+- Keep middleware functions small and focused.
+- Always call `next()` unless you want to terminate the request.
+- Use middleware for logging, auth, validation, and error handling.
+- Register middleware before your routes.
+
+---
+
+## 🔍 Next Steps
+
+Now that you understand middleware, you can explore:
+
+- [Request & Response](/request-response) — Learn how to access headers, body, and more.
+- [TLS Integration](/tls) — Secure your app with HTTPS.
+- [Error Handling](/error-handling) — Build robust and fault-tolerant applications.

@@ -1,0 +1,98 @@
+---
+title: 📦 Request & Response
+description: Learn how to work with incoming requests and send responses in Zuno.
+---
+
+import { Code } from '@astrojs/starlight/components';
+
+Zuno provides expressive and modern interfaces for working with HTTP requests and responses. These objects are passed to every route and middleware handler, giving you full control over how data is received and returned.
+
+---
+
+## 🔍 Accessing Request Data
+
+The `Request` object exposes several useful methods:
+
+| Method | Description |
+|--------|-------------|
+| `req.method()` | Returns the HTTP method (e.g. `"GET"`, `"POST"`) |
+| `req.path()` | Returns the path portion of the URL |
+| `req.url()` | Returns the full URL including query string |
+| `req.query("key")` | Returns the value of a query parameter |
+| `req.param("name")` | Returns the value of a dynamic route parameter |
+| `req.header("Header-Name")` | Returns the value of a specific header |
+| `req.body()` | Returns the raw body of the request as a string |
+
+---
+
+## 🧪 Example: Echoing Request Info
+
+<Code title="echo.cpp" lang="cpp" code={`app.post("/echo/:id", [](auto req, auto res) {
+  std::string id = req.param("id");
+  std::string q = req.query("q");
+  std::string body = req.body();
+
+  std::string response = "ID: " + id + "\\nQuery: " + q + "\\nBody: " + body;
+  res.send(response);
+});`} />
+
+This route will respond with the dynamic `:id`, the `q` query parameter, and the request body.
+
+---
+
+## 📤 Sending Responses
+
+The `Response` object provides methods to send data back to the client:
+
+| Method | Description |
+|--------|-------------|
+| `res.send("text")` | Sends a plain text response |
+| `res.status(code)` | Sets the HTTP status code |
+| `res.json(obj)` | Sends a JSON response (if supported) |
+| `res.setHeader("Header", "Value")` | Sets a custom header |
+
+---
+
+## ✅ Example: Custom Status and Headers
+
+<Code title="custom-response.cpp" lang="cpp" code={`app.get("/status", [](auto req, auto res) {
+  res.status(202);
+  res.setHeader("X-Custom-Header", "Zuno");
+  res.send("Accepted");
+});`} />
+
+---
+
+## 🧠 Combining Request & Response
+
+You can use both objects together to build dynamic behavior:
+
+<Code title="greet.cpp" lang="cpp" code={`app.get("/greet/:name", [](auto req, auto res) {
+  std::string name = req.param("name");
+  std::string lang = req.query("lang");
+
+  if (lang == "es") {
+    res.send("Hola, " + name + "!");
+  } else {
+    res.send("Hello, " + name + "!");
+  }
+});`} />
+
+---
+
+## 🧰 Best Practices
+
+- Always validate input from `req.query()` and `req.body()` before using it.
+- Use `res.status()` before `res.send()` to set custom status codes.
+- Avoid sending multiple responses for a single request.
+- Use middleware to centralize logging, auth, or input validation.
+
+---
+
+## 🔍 Next Steps
+
+Now that you know how to work with requests and responses, continue with:
+
+- [Error Handling](/error-handling) — Gracefully handle exceptions and invalid input.
+- [TLS Integration](/tls) — Secure your responses with HTTPS.
+- [Modules](/modules) — Organize your routes and logic into reusable components.

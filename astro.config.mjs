@@ -16,6 +16,7 @@ export default defineConfig({
           href: "https://github.com/ZunoFramework/zuno",
         },
       ],
+      customCss: ["./src/styles/zuno.css"],
     }),
   ],
 });

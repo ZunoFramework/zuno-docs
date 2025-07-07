@@ -1,75 +1,107 @@
 ---
-title: Extensions
-description: Learn about Zuno’s built-in middleware extensions and how to use them.
+title: 🧩 Extensions
+description: Built-in middleware extensions for compression, CORS, rate limiting, and static file serving.
 ---
 
-# 🧩 Zuno Extensions
+import { Code } from '@astrojs/starlight/components';
 
-Zuno includes optional middleware components to enhance functionality without adding complexity. These extensions help you compress, secure, and scale your app.
+Zuno includes a set of powerful built-in middleware extensions that you can enable with a single function call. These extensions simplify common tasks like compression, CORS, rate limiting, and serving static files.
 
----
-
-## 🌀 Brotli Compression
-
-Reduces response size using Brotli if the client supports it:
-
-```cpp
-app.use(zuno::compression());
-```
-
-By default, responses are compressed only if they reduce size by 20% or more (`0.8` ratio). You can customize this threshold:
-
-```cpp
-app.use(zuno::compression(0.7)); // Accept smaller gains
-```
-
-✅ Sets `Content-Encoding: br` and respects `Accept-Encoding`.
+Each extension is designed to be lightweight, configurable, and production-ready.
 
 ---
 
-## 🌐 CORS
+## 🗜️ Brotli Compression
 
-Allows cross-origin requests (great for SPAs and frontend development):
+Enable Brotli compression to reduce response size and improve performance. You can configure the compression ratio (1–11).
 
-```cpp
-app.use(zuno::cors());
-```
+<Code title="Enable Compression" lang="cpp" code={`
+#include <zuno/extensions/compression.hpp>
 
-Default behavior:
+auto minRatio = 0.8;
+app.use(zuno::compression(minRatio));
+`} />
 
-- Allows all origins
-- Methods: `GET, POST, PUT, DELETE, OPTIONS`
-- Headers: `Content-Type`
+- **Parameter:** `minRatio` — Compression level (default: 0.8)
 
-Customize if needed:
+---
 
-```cpp
+## 🌐 CORS (Cross-Origin Resource Sharing)
+
+Enable CORS to allow cross-origin requests from browsers. You can customize allowed origins, methods, and headers.
+
+<Code title="Enable CORS" lang="cpp" code={`
+#include <zuno/extensions/cors.hpp>
+
 app.use(zuno::cors({
-  .origin = "https://myfrontend.dev",
-  .methods = "GET, POST",
+  .origin = "*",
+  .methods = "GET, POST, PUT, DELETE, OPTIONS, PATCH",
   .headers = "Content-Type, Authorization"
-}));
-```
+}));`} />
+
+- **Parameters:**
+  - `origin`: Allowed origin(s) (default: `"*"`)
+  - `methods`: Allowed HTTP methods
+  - `headers`: Allowed request headers
+- **Effect:** Adds appropriate `Access-Control-*` headers to responses
 
 ---
 
 ## 🚦 Rate Limiting
 
-Limit the number of requests per client/IP in a given timeframe:
+Protect your app from abuse by limiting the number of requests per client over a time window.
 
-```cpp
+<Code title="Enable Rate Limiting" lang="cpp" code={`
+#include <zuno/extensions/rate-limit.hpp>
+
 app.use(zuno::rateLimit({
-  .max = 100,
-  .intervalMs = 60000
-}));
-```
+  .max = 100,         // Max requests
+  .intervalMs = 60000 // Per 60 seconds
+}));`} />
 
-Useful for API protection and abuse mitigation.
-
----
-
-Zuno extensions help you scale while keeping control. They’re modular by design—add only what you need and keep your server fast and focused.
+- **Parameters:**
+  - `max`: Maximum number of requests per interval (default: 100)
+  - `intervalMs`: Time window in milliseconds (default: 60,000 ms)
+- **Effect:** Returns `429 Too Many Requests` if the limit is exceeded
 
 ---
 
-**What’s next?** Consider writing your own middleware or exploring advanced topics like headers, streaming, or asynchronous response flows.
+## 🗂️ Static File Serving
+
+Serve static assets like HTML, CSS, JS, or images from a directory. You can configure the URL prefix, caching, and max-age.
+
+<Code title="Serve Static Files" lang="cpp" code={`
+
+app.use(zuno::static({
+  .directory = "public",
+  .urlPrefix = "/",
+  .cache = true,
+  .maxAge = 3600 // 1 hour
+}));`} />
+
+- **Parameters:**
+  - `directory`: Path to the static file directory (required)
+  - `urlPrefix`: URL prefix to match (default: `"/"`)
+  - `cache`: Whether to enable caching headers (default: `false`)
+  - `maxAge`: Cache duration in seconds (default: `3600`)
+
+- **Effect:** Serves files like `/public/index.html` at `http://localhost:8080/index.html`
+
+---
+
+## 🧠 Best Practices
+
+- Use Brotli compression in production to reduce bandwidth.
+- Enable CORS only for trusted origins in secure environments.
+- Tune rate limits based on your app’s expected traffic.
+- Serve static files from a CDN in high-traffic deployments.
+
+---
+
+## 🔍 Next Steps
+
+Now that you know how to use extensions, you can explore:
+
+- [Middleware](/middleware) — Learn how to write your own custom middleware.
+- [Deployment](/deployment) — Optimize your app for production environments.
+- [Modules](/modules) — Organize your app into reusable components.
