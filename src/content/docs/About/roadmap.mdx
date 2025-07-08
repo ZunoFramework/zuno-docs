@@ -1,0 +1,43 @@
+---
+title: Roadmap
+description: Explore the future of Zuno—features in progress, planned improvements, and long-term goals.
+---
+
+# 🛣️ Zuno Roadmap
+
+Zuno is evolving rapidly. This roadmap outlines what’s coming next, what’s being explored, and what we dream of building.
+
+We prioritize features that improve developer experience, performance, and modularity—without compromising simplicity.
+
+---
+
+## ✅ Recently Completed
+
+- ✅ Modular routing system with `App::get/post/etc.`
+- ✅ TLS support via `useTLS()`
+- ✅ Middleware pipeline with `app.use()`
+- ✅ Brotli compression extension
+- ✅ Static file serving with fallback support
+- ✅ WebSocket support with `app.ws()`
+- ✅ FetchContent-based integration via CMake
+- ✅ JSON parsing utilities (`req.json()`, `res.json()`)
+
+---
+
+## 🚧 In Progress
+
+- 🧾 Logging utilities with log levels and structured output
+- 🧠 Error handling middleware with stack traces.
+- 📦 Built-in support for SQLite (optional extension)
+- 🧱 CLI tool for scaffolding projects (`zuno new`)
+
+---
+
+## 🧭 Planned Features
+
+| Feature                     | Status     | Notes                                      |
+|----------------------------|------------|--------------------------------------------|
+| Form data parsing          | Planned    | `multipart/form-data` and `application/x-www-form-urlencoded` |
+| File uploads               | Planned    | With size limits and streaming support     |
+| Template rendering         | Exploring  | Optional integration with Mustache or similar |
+| Hot reload (dev mode)      | Exploring  | Watch mode for faster iteration            |

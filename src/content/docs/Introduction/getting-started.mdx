@@ -1,0 +1,116 @@
+---
+title: Getting Started
+description: Learn how to install Zuno, scaffold your first project, and run a basic server.
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🚀 Getting Started
+
+Welcome to **Zuno Framework**! This guide will help you set up your first Zuno project in just a few minutes. Whether you're building a REST API, a secure microservice, or just exploring modern C++ web development—you're in the right place.
+
+---
+
+## 📦 Prerequisites
+
+Before you begin, make sure you have the following installed:
+
+- **C++20 or newer** (Zuno uses modern C++ features)
+- **CMake 3.16+**
+- **A C++ compiler** (GCC, Clang, or MSVC)
+- **Git** (for cloning the starter repo)
+
+Optional but recommended:
+
+- **OpenSSL** (for TLS support)
+
+---
+
+## 🧪 Quick Start (Using Starter Template)
+
+The fastest way to get started is by cloning the official starter project:
+
+<Code lang="bash" code={`git clone https://github.com/ZunoFramework/zuno-starter.git
+cd zuno-starter
+cmake -B build
+cmake --build build
+./build/zuno-app`} />
+
+You should see:
+
+<Code lang="bash" code="Zuno server running on http://localhost:3000" />
+
+---
+
+## 🛠️ Manual Setup (From Scratch)
+
+Prefer to build it yourself? Here's how to set up a minimal Zuno project manually.
+
+### 1. Create a new project folder
+
+<Code lang="bash" code={`mkdir my-zuno-app
+cd my-zuno-app`} />
+
+### 2. Create a `CMakeLists.txt`
+
+<Code lang="cmake" code={`cmake_minimum_required(VERSION 3.16)
+project(my_zuno_app)
+
+set(CMAKE_CXX_STANDARD 17)
+
+add_executable(zuno-app main.cpp)
+
+# Link Zuno (assuming it's installed via vcpkg or system-wide)
+find_package(Zuno REQUIRED)
+target_link_libraries(zuno-app PRIVATE Zuno::Zuno)`} />
+
+### 3. Write your first server in `main.cpp`
+
+<Code lang="cpp" code={`#include <zuno/zuno.hpp>
+
+int main() {
+  zuno::App app;
+
+  app.get("/", [](auto& req, auto& res) {
+    res.send("Hello from Zuno!");
+  });
+
+  app.listen(3000);
+}`} />
+
+### 4. Build and run
+
+<Code lang="bash" code={`cmake -B build
+cmake --build build
+./build/zuno-app`} />
+
+---
+
+## 🔐 Enabling TLS (Optional)
+
+If you want to serve over HTTPS, Zuno makes it easy:
+
+<Code lang="cpp" code={`zuno::App app;
+
+  app.get("/", [](auto& req, auto& res) {
+    res.send("Hello from Zuno!");
+  });
+
+  app.useTLS({"server.crt", "server.key"});
+
+  app.listen(443);`} />
+
+Make sure your certificate and key files are valid and accessible.
+
+---
+
+## 🧭 Next Steps
+
+Now that your server is running, you can:
+
+- Explore [Routing & Controllers](/guide/routing)
+- Add [Middleware](/guide/middleware) like CORS or compression
+- Secure your app with [TLS & Security](/guide/tls-security)
+
+---
+
+Welcome to the flock. 🦜
