@@ -1,0 +1,95 @@
+---
+title: TLS & Security
+description: Learn how to enable HTTPS and apply security best practices in Zuno.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🔐 TLS & Security
+
+Zuno is built with security in mind. From native TLS support to middleware for CORS and rate limiting, it gives you the tools to build secure, production-ready applications.
+
+---
+
+## 🔒 Enabling HTTPS with TLS
+
+Zuno supports HTTPS out of the box using TLS. You just need a certificate and a private key.
+
+<Code lang="cpp" code={`app.useTLS({
+  "certs/cert.pem",
+  "certs/key.pem"
+});`}/>
+
+
+Make sure your certificate files are valid and accessible. You can generate self-signed certificates for development using OpenSSL:
+
+<Code lang="bash" code={`openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes`} />
+
+---
+
+## 🌐 CORS (Cross-Origin Resource Sharing)
+
+To control which domains can access your API, use the built-in CORS middleware:
+
+<Code lang="cpp" code={`app.use(cors({
+  .origin = "https://example.com",
+  .methods = "GET,POST",
+  .headers = "Content-Type"
+}));`} />
+
+
+You can also allow all origins (not recommended for production):
+
+<Code lang="cpp" code={`app.use(cors());`} />
+
+---
+
+## 🚦 Rate Limiting
+
+Prevent abuse and denial-of-service attacks by limiting the number of requests per client:
+
+<Code lang="cpp" code={`app.use(rateLimit({
+  60000,     // 1 minute
+  100     // per IP
+}));`} />
+
+This middleware tracks IP addresses and blocks excessive requests.
+
+---
+
+## 🧼 Input Validation (Coming Soon)
+
+Zuno will soon include utilities for validating query parameters, request bodies, and headers. For now, you can implement your own checks inside route handlers or middleware.
+
+<Code lang="cpp" code={`app.post("/login", [](auto& req, auto& res) {
+  if (req.body.empty()) {
+    res.status(400).send("Missing credentials");
+    return;
+  }
+  // Proceed with authentication...
+});`} />
+
+
+---
+
+## 🧭 Best Practices
+
+- Always use HTTPS in production
+- Use CORS to restrict access to trusted domains
+- Apply rate limiting to public endpoints
+- Validate all user input
+- Avoid exposing internal error messages
+
+---
+
+## 🧭 Next Steps
+
+Now that your app is secure, continue with:
+
+- [Error Handling](/en/guide/error-handling)
+- [Static File Serving](/en/middleware/static-files)
+- [Advanced Configuration](/en/reference/advanced-config)
+
+---
+
+Security isn’t optional—it’s foundational. Zuno helps you build with confidence.

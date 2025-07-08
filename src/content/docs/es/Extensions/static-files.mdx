@@ -1,0 +1,131 @@
+---
+title: Archivos Estáticos
+description: Sirve archivos estáticos como HTML, CSS o imágenes desde tu servidor Zuno.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🗂️ Archivos Estáticos
+
+Este ejemplo muestra cómo usar la extensión `staticFiles` de Zuno para servir archivos como HTML, CSS, JS o imágenes directamente desde el servidor. Es útil para:
+
+- Aplicaciones frontend embebidas
+- Documentación estática
+- Recursos públicos como logos o fuentes
+
+---
+
+## 🧱 Estructura del Proyecto
+
+<Code
+  lang="text"
+  code={`static-files-example/
+├── CMakeLists.txt
+├── public/
+│   ├── index.html
+│   └── styles.css
+└── main.cpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.20)
+project(static_files_example)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(zuno)
+
+add_executable(static-files-example main.cpp)
+target_link_libraries(static-files-example PRIVATE zuno)`}
+/>
+
+---
+
+## 📄 `main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include <zuno/extensions/static_files.hpp>
+
+int main() {
+  zuno::App app;
+
+  // Servir archivos desde la carpeta "public"
+  app.use(zuno::staticFiles("public"));
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## 📄 `public/index.html`
+
+<Code
+  lang="html"
+  code={`<!DOCTYPE html>
+<html>
+  <head>
+    <title>Zuno Estático</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Hola desde Zuno</h1>
+  </body>
+</html>`}
+/>
+
+---
+
+## 📄 `public/styles.css`
+
+<Code
+  lang="css"
+  code={`body {
+  font-family: sans-serif;
+  background: #f0f0f0;
+  color: #333;
+  text-align: center;
+  padding: 2rem;
+}`}
+/>
+
+---
+
+## 🚀 Ejecutar el Servidor
+
+<Code
+  lang="bash"
+  code={`cmake -B build
+cmake --build build
+./build/static-files-example`}
+/>
+
+Luego visita [http://localhost:3000/index.html](http://localhost:3000/index.html) para ver tu archivo HTML servido por Zuno.
+
+---
+
+## 🧭 Próximos Pasos
+
+- Agrega [compresión Brotli](/extensions/compression) para mejorar el rendimiento
+- Usa [TLS](/guide/tls-security) para servir contenido seguro
+- Combina con [frontend embebido](/examples/embedded-frontend) para apps fullstack
+
+---
+
+Zuno te permite servir contenido estático de forma rápida, segura y sin dependencias externas.

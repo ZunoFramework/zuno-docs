@@ -1,0 +1,44 @@
+---
+title: Plan de Desarrollo
+description: Explora el futuro de Zuno—funciones en progreso, mejoras planeadas y objetivos a largo plazo.
+locale: es
+---
+
+# 🛠️ Plan de Desarrollo de Zuno
+
+Zuno está evolucionando rápidamente. Este plan de desarrollo detalla lo que viene, lo que se está explorando y lo que soñamos con construir.
+
+Priorizamos las funciones que mejoran la experiencia del desarrollador, el rendimiento y la modularidad sin comprometer la simplicidad.
+
+---
+
+## ✅ Recientemente Completadas
+
+- ✅ Sistema de routing modular con `App::get/post/etc.`
+- ✅ Soporte para TLS mediante `useTLS()`
+- ✅ Pipeline de middleware con `app.use()`
+- ✅ Extensión de compresión Brotli
+- ✅ Servicio de archivos estáticos con soporte de fallback
+- ✅ Integración basada en FetchContent a través de CMake
+- ✅ Utilidades de parseo JSON (`req.json()`, `res.json()`)
+
+---
+
+## 🚧 En Proceso
+
+- 🧾 Herramientas de registro con niveles de log y salida estructurada
+- 🧠 Middleware para manejo de errores con trazas de pila.
+- 📦 Soporte incorporado para SQLite (extensión opcional)
+- 🧱 Herramienta CLI para plantear proyectos (`zuno new`)
+- 📦 Soporte para WebSocket con `app.ws()`
+
+---
+
+## 🧭 Funciones Planeadas
+
+| Función                     | Estado     | Notas                                      |
+|----------------------------|------------|--------------------------------------------|
+| Parseo de datos de formulario | Planificado | `multipart/form-data` y `application/x-www-form-urlencoded` |
+| Subida de archivos          | Planificado | Con límites de tamaño y soporte para transmisión |
+| Renderizado de plantillas    | Explorando  | Integración opcional con Mustache o similar   |
+| Reload caliente (modo de desarrollo) | Explorando | Modo de observación para una iteración más rápida |

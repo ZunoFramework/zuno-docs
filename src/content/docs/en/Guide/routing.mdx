@@ -1,0 +1,104 @@
+---
+title: Routing & Controllers
+description: Learn how to define routes, handle parameters, and organize controllers in Zuno.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🛣️ Routing & Controllers
+
+Zuno uses a clean, expressive routing system inspired by frameworks like Express.js. You can define routes directly in your `main.cpp`, or organize them into modular controllers for larger applications.
+
+---
+
+## 🧪 Basic Routing
+
+Zuno supports standard HTTP methods: `GET`, `POST`, `PUT`, `DELETE`, and more.
+
+<Code lang="cpp" code={`app.get("/", [](auto& req, auto& res) {
+      res.send("Hello from Zuno!");
+});
+
+app.post("/submit", [](auto& req, auto& res) {
+     res.send("Data received!");
+});`}/>
+
+---
+
+## 🔢 Route Parameters
+
+You can define dynamic segments in your routes using `:param`.
+
+<Code lang="cpp" code={`app.get("/users/:id", [](auto& req, auto& res) {
+    std::string userId = req.params["id"];
+    res.send("User ID: " + userId);
+});
+`} />
+
+---
+
+## 🧾 Query Parameters
+
+Access query parameters via `req.query`.
+
+<Code lang="cpp" code={`app.get("/search", [](auto& req, auto& res) {
+    std::string term = req.query("q");
+    res.send("Searching for: " + term);
+});`}/>
+
+---
+
+## 📦 auto Body
+
+For `POST` and `PUT` autos, you can access the body as a string or parse it as JSON.
+
+<Code lang="cpp" code={`app.post("/echo", [](auto& req, auto& res) {
+    res.send("You sent: " + req.body());
+});`} />
+
+> JSON parsing helpers are coming soon as part of the utilities module.
+
+---
+
+## 🧱 Modular Controllers
+
+For larger apps, you can organize routes into separate files or modules.
+
+### `routes/users.cpp`
+
+<Code lang="cpp" code={`#include <zuno/zuno.hpp>
+
+void registerUserRoutes(zuno::App& app) {
+    app.get("/users", [](auto& req, auto& res) {
+        res.send("User list");
+    });
+
+    app.get("/users/:id", [](auto& req, auto& res) {
+        res.send("User ID: " + req.params["id"]);
+    });
+}`} />
+
+### `main.cpp`
+
+<Code lang="cpp" code={`#include <zuno/zuno.hpp>
+#include "routes/users.hpp"
+
+int main() {
+    zuno::App app;
+    registerUserRoutes(app);
+    app.listen(3000);
+}`}/>
+
+---
+
+## 🧭 Next Steps
+
+Now that you’ve mastered routing, you can:
+
+- Add [Middleware](/en/guide/middleware) for logging, CORS, or authentication
+- Secure your endpoints with [TLS & Security](/en/guide/tls-security)
+- Handle errors gracefully with [Error Handling](/en/guide/error-handling)
+
+---
+
+Zuno’s routing system is fast, flexible, and built for modern C++.

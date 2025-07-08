@@ -1,0 +1,143 @@
+---
+title: Authenticated API Endpoint
+description: Learn how to protect API routes in Zuno using custom authentication middleware.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🔐 Authenticated API Endpoint
+
+In this example, you’ll learn how to protect an API route using a custom authentication middleware. This is useful for securing endpoints that require tokens, API keys, or session headers.
+
+---
+
+## 🧱 Project Structure
+
+<Code
+  lang="text"
+  code={`authenticated-api/
+├── CMakeLists.txt
+├── src/
+│   ├── main.cpp
+│   └── middleware/
+│       └── auth.cpp
+└── include/
+    └── middleware/
+        └── auth.hpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.16)
+project(authenticated_api)
+
+set(CMAKE_CXX_STANDARD 20)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(zuno)
+
+include_directories(include)
+
+add_executable(authenticated-api
+  src/main.cpp
+  src/middleware/auth.cpp
+)
+
+target_link_libraries(authenticated-api PRIVATE zuno)`}
+/>
+
+---
+
+## 📄 `src/main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include "middleware/auth.hpp"
+
+int main() {
+  zuno::App app;
+
+  app.get("/public", [](auto& req, auto& res) {
+    res.send("This is a public endpoint.");
+  });
+
+  app.get("/private", authMiddleware, [](auto& req, auto& res) {
+    res.send("Access granted to private data.");
+  });
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## 📄 `src/middleware/auth.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include &lt;zuno/zuno.hpp&gt;
+#include "middleware/auth.hpp"
+
+Middleware authMiddleware = [](auto& req, auto& res, Next next) {
+  auto auth = req.headers["Authorization"];
+
+  if (auth != "Bearer secret-token") {
+    res.status(401).send("Unauthorized");
+    return;
+  }
+
+  next(); // Proceed to the route handler
+};`}
+/>
+
+---
+
+## 📄 `include/middleware/auth.hpp`
+
+<Code
+  lang="cpp"
+  code={`#pragma once
+#include <zuno/zuno.hpp>
+
+extern Middleware authMiddleware;`}
+/>
+
+---
+
+## 🧪 Test the API
+
+<Code
+  lang="bash"
+  code={`curl http://localhost:3000/public
+# → This is a public endpoint.
+
+curl http://localhost:3000/private
+# → Unauthorized
+
+curl -H "Authorization: Bearer secret-token" http://localhost:3000/private
+# → Access granted to private data.`}
+/>
+
+---
+
+## 🧭 What’s Next?
+
+- Add [Rate Limiting](/en/extensions/rate-limiting) to protect login endpoints
+- Use [TLS](/en/guide/tls-security) to encrypt credentials
+- Return [JSON error responses](/en/guide/error-handling) for consistency
+
+---
+
+Zuno makes it easy to secure your endpoints with clean, modular middleware—just like modern frameworks should.

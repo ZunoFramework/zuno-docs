@@ -1,0 +1,96 @@
+---
+title: Ruteo
+description: Aprende cómo definir rutas HTTP en Zuno usando una sintaxis clara y moderna.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🛣️ Ruteo
+
+Zuno te permite definir rutas HTTP de forma clara y expresiva. Puedes manejar diferentes métodos (GET, POST, etc.), capturar parámetros dinámicos y organizar tus rutas en módulos reutilizables.
+
+---
+
+## 📄 Rutas Básicas
+
+<Code
+  lang="cpp"
+  code={`app.get("/", [](auto& req, auto& res) {
+    res.send("Hola desde Zuno");
+});`}
+/>
+
+Puedes usar los métodos `.get()`, `.post()`, `.put()`, `.del()` y más.
+
+---
+
+## 📌 Parámetros en la Ruta
+
+Zuno soporta rutas dinámicas con parámetros:
+
+<Code
+  lang="cpp"
+  code={`app.get("/saludo/:nombre", [](auto& req, auto& res) {
+    std::string nombre = req.params["nombre"];
+    res.send("Hola, " + nombre + "!");
+});`}
+/>
+
+Una solicitud a `/saludo/Jose` responderá con:
+
+```
+Hola, Jose!
+```
+
+---
+
+## 🧪 Acceder a Query Params
+
+Puedes acceder a parámetros de consulta con `req.query`:
+
+<Code
+  lang="cpp"
+  code={`app.get("/buscar", [](auto& req, auto& res) {
+    std::string q = req.query["q"];
+    res.send("Buscando: " + q);
+});`}
+/>
+
+Una solicitud a `/buscar?q=zuno` responderá con:
+
+```
+Buscando: zuno
+```
+
+---
+
+## 🧱 Agrupar Rutas
+
+Puedes agrupar rutas en funciones reutilizables:
+
+<Code
+  lang="cpp"
+  code={`void registerUserRoutes(zuno::App& app) {
+    app.get("/users", [](auto& req, auto& res) {
+        res.json({ { "id", 1 }, { "name", "Alice" } });
+    });
+}`}
+/>
+
+Y luego en `main.cpp`:
+
+<Code
+  lang="cpp"
+  code={`registerUserRoutes(app);`}
+/>
+
+---
+
+## 🧭 Próximos Pasos
+
+- Aprende sobre [middleware](/es/guide/middleware)
+- Agrega [autenticación](/es/examples/authenticated-endpoint)
+
+---
+
+Zuno hace que definir rutas en C++ sea tan natural como en frameworks web modernos—pero con el poder y rendimiento de C++20.

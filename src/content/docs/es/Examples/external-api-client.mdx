@@ -1,0 +1,113 @@
+---
+title: Cliente de API Externa
+description: Construye un microservicio con Zuno que obtiene datos desde una API externa y los devuelve al cliente.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🌐 Cliente de API Externa
+
+En este ejemplo, construirás un microservicio con Zuno que obtiene datos desde una API externa (por ejemplo, JSONPlaceholder) y los devuelve al cliente. Esto es útil para:
+
+- Encapsular APIs de terceros
+- Agregar datos desde múltiples fuentes
+- Construir microservicios que dependen de sistemas externos
+
+---
+
+## 📦 Requisitos
+
+Este ejemplo utiliza una biblioteca HTTP ligera para hacer peticiones salientes. Puedes usar cualquier cliente HTTP en C++ (como `cpr`, Boost.Beast o un wrapper sobre libcurl). Para simplificar, usaremos [cpr](https://github.com/libcpr/cpr) vía `FetchContent`.
+
+---
+
+## 🧱 Estructura del Proyecto
+
+<Code
+  lang="text"
+  code={`external-api-client/
+├── CMakeLists.txt
+└── main.cpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.20)
+project(external_api_client)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_Declare(
+  cpr
+  GIT_REPOSITORY https://github.com/libcpr/cpr.git
+  GIT_TAG        1.10.4
+)
+
+FetchContent_MakeAvailable(zuno cpr)
+
+add_executable(external-api main.cpp)
+target_link_libraries(external-api PRIVATE zuno cpr::cpr)`}
+/>
+
+---
+
+## 📄 `main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include <cpr/cpr.h>
+
+int main() {
+  zuno::App app;
+
+  app.get("/posts/:id", [](auto& req, auto& res) {
+    auto id = req.params["id"];
+    auto response = cpr::Get(cpr::Url{std::format("https://jsonplaceholder.typicode.com/posts/{}", id)});
+
+    if (response.status_code == 200) {
+      res.status(200).send(response.text);
+    } else {
+      res.status(502).send("Error al obtener datos externos");
+    }
+  });
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## 🧪 Probar el Microservicio
+
+<Code
+  lang="bash"
+  code={`curl http://localhost:3000/posts/1`}
+/>
+
+Deberías recibir una respuesta JSON desde la API externa, reenviada por tu servidor Zuno.
+
+---
+
+## 🧭 Próximos Pasos
+
+- Agrega [caché](/es/extensions/rate-limiting) para reducir la carga externa
+- Usa [manejo de errores](/es/guide/error-handling) para mejorar la resiliencia
+- Protege el endpoint con [autenticación](/es/examples/authenticated-endpoint)
+
+---
+
+Zuno facilita la creación de microservicios que se comunican con el mundo exterior—de forma segura y eficiente.

@@ -1,0 +1,143 @@
+---
+title: Punto de Finalización de API Autenticado
+description: Aprende cómo proteger rutas de API utilizando middleware de autenticación personalizado en Zuno. Esto es útil para asegurar puntos finales que requieren tokens, claves de API o cabeceras de sesión.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🔐 Punto de Finalización de API Autenticado
+
+En este ejemplo, aprenderás a proteger una ruta de API utilizando un middleware de autenticación personalizado. Esto es útil para asegurar puntos finales que requieren tokens, claves de API o cabeceras de sesión.
+
+---
+
+## 🧱 Estructura del Proyecto
+
+<Code
+  lang="text"
+  code={`authenticated-api/
+├── CMakeLists.txt
+├── src/
+│   ├── main.cpp
+│   └── middleware/
+│       └── auth.cpp
+└── include/
+    └── middleware/
+        └── auth.hpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.16)
+project(authenticated_api)
+
+set(CMAKE_CXX_STANDARD 20)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(zuno)
+
+include_directories(include)
+
+add_executable(authenticated-api
+  src/main.cpp
+  src/middleware/auth.cpp
+)
+
+target_link_libraries(authenticated-api PRIVATE zuno)`}
+/>
+
+---
+
+## 📄 `src/main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include "middleware/auth.hpp"
+
+int main() {
+  zuno::App app;
+
+  app.get("/public", [](auto& req, auto& res) {
+    res.send("Esta es una ruta pública.");
+  });
+
+  app.get("/private", authMiddleware, [](auto& req, auto& res) {
+    res.send("Acceso concedido a datos privados.");
+  });
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## 📄 `src/middleware/auth.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include "middleware/auth.hpp"
+
+Middleware authMiddleware = [](auto& req, auto& res, Next next) {
+  auto auth = req.headers["Authorization"];
+
+  if (auth != "Bearer secret-token") {
+    res.status(401).send("No autorizado");
+    return;
+  }
+
+  next(); // Continuar con el manejador de ruta
+};`}
+/>
+
+---
+
+## 📄 `include/middleware/auth.hpp`
+
+<Code
+  lang="cpp"
+  code={`#pragma once
+#include <zuno/zuno.hpp>
+
+extern Middleware authMiddleware;`}
+/>
+
+---
+
+## 🧪 Prueba la API
+
+<Code
+  lang="bash"
+  code={`curl http://localhost:3000/public
+# → Esta es una ruta pública.
+
+curl http://localhost:3000/private
+# → No autorizado
+
+curl -H "Authorization: Bearer secret-token" http://localhost:3000/private
+# → Acceso concedido a datos privados.`}
+/>
+
+---
+
+## 🧭 ¿Qué viene después?
+
+- Añadir [Limitación de Tasa](/es/extensions/rate-limiting) para proteger puntos finales de inicio de sesión.
+- Usar [TLS](/es/guide/tls-security) para cifrar credenciales.
+- Devolver respuestas de error en JSON para consistencia.
+
+---
+
+Zuno facilita la protección de tus puntos finales con middleware limpio y modular — como cualquier framework moderno debería hacerlo.

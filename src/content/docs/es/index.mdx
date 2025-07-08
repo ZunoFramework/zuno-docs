@@ -1,0 +1,77 @@
+---
+title: 🖐️ Bienvenidos a Zuno
+description: Construye aplicaciones web de alto rendimiento en C++ con diseño modular, soporte para TLS y una API expresiva.
+locale: es
+---
+
+import { Icon, Badge, LinkButton, Code } from '@astrojs/starlight/components';
+
+# <Icon name="rocket" /> Framework Zuno <Badge variant="tip" size='medium' text="Beta"/>
+
+**El moderno framework web de C++ que has estado esperando.**  
+Zuno combina el poder raw del código nativo con la elegancia del desarrollo web moderno.  
+Construye aplicaciones seguras, modulares y extremadamente rápidas — todo en C++.
+
+<LinkButton href="/es/introduction/getting-started" icon="rocket" variant="primary">Comienza</LinkButton>
+
+---
+
+## ✨ ¿Por Qué Elegir Zuno?
+
+- ⚡ <strong>Extremadamente Rápidas</strong>  
+  Inspiradas por Asio standalone, Zuno entrega rendimiento asincrónico sin sobrecarga que deja en el polvo a las tradicionales frameworks.
+
+- 🔐 <strong>Seguras por Diseño</strong>  
+  El soporte para TLS está integrado desde la base. Sin trucos. Sin envoltorios. Solo seguridad limpia y nativa.
+
+- 🧩 <strong>API Expresiva</strong>  
+  Inspiradas en Express.js, Zuno te da una interfaz limpia e intuitiva — pero en modern C++.
+
+- 🛠️ <strong>Módulas y Escalables</strong>  
+  Arquitectura tu aplicación con módulos reutilizables y escala fácilmente conforme crecen tus necesidades.
+
+- 📦 <strong>Ligera y Portátil</strong>  
+  Sin dependencias pesadas. Solo tú, Asio y la carretera abierta.
+
+---
+
+## 🧠 Construido para Constructores
+
+Sea que estés construyendo microservicios, sistemas embebidos o aplicaciones web completas, Zuno te da las herramientas para mover rápido y construir con confianza.
+
+export const code = `
+#include <zuno/zuno.hpp>
+
+void main(){
+  zuno::App app;
+
+  app.get("/", [](auto req, auto res) {
+    res.send("¡Hola, mundo desde Zuno!");
+  });
+
+  app.listen(3456);
+}
+`;
+
+<Code lang="cpp" code={code} title='main.cpp' />
+
+---
+
+## 📚 Explora los Documentos
+
+- [🚀 Guía Rápida de Arranque](/es/introduction/getting-started) — Lanza tu primer proyecto Zuno en minutos.
+- [🏗️ Visión General de la Arquitectura](/es/guide/architecture) — Entiende cómo está construido Zuno y cómo extenderlo.
+- [🔒 Integración con TLS](/es/guide/tls-security) — Seguridad tus puntos finales con integración nativa de TLS.
+
+---
+
+## 💬 ¿Qué dicen los Desarrolladores?
+
+> “Zuno nos dio la performance del código nativo con la flexibilidad de un moderno framework web. Es un game-changer para los desarrolladores de C++.”  
+> — <em>Elena M., Ingeniera de Sistemas, Bogotá</em>
+
+---
+
+## 🔧 Listo para Construir el Futuro en C++?
+
+<LinkButton href="/docs/getting-started" icon="rocket" variant="primary">Comienza con Zuno</LinkButton>

@@ -1,0 +1,151 @@
+---
+title: Arquitectura de Zuno
+description: Explora los componentes internos de Zuno y cómo se conectan para manejar peticiones HTTP de forma eficiente.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🧠 Arquitectura de Zuno
+
+Zuno está diseñado como un framework HTTP moderno, modular y de alto rendimiento para C++20. Su arquitectura se basa en una canalización de middlewares, un motor de ruteo eficiente y una integración directa con Asio para operaciones asincrónicas.
+
+---
+
+## 🧩 Componentes Principales
+
+<Code
+  lang="text"
+  code={`[Cliente HTTP]
+      │
+      ▼
+┌──────────────┐
+│   Servidor   │ ←— socket TCP (Asio)
+└──────────────┘
+      │
+      ▼
+┌────────────────────────────┐
+│     Middleware Pipeline    │
+└────────────────────────────┘
+      │
+      ▼
+┌────────────────────────────┐
+│        Motor de Ruteo      │
+└────────────────────────────┘
+      │
+      ▼
+┌────────────────────────────┐
+│     Controlador de Ruta    │
+└────────────────────────────┘
+      │
+      ▼
+┌────────────────────────────┐
+│     Respuesta HTTP         │
+└────────────────────────────┘`}
+/>
+
+---
+
+## ⚙️ 1. Servidor HTTP (Asio)
+
+Zuno utiliza [Asio](https://think-async.com/) como backend de red para manejar conexiones TCP de forma eficiente y no bloqueante. Cada conexión entrante se procesa en un bucle de eventos asincrónico.
+
+---
+
+## 🧵 2. Canalización de Middlewares
+
+Cada petición pasa por una cadena de middlewares antes de llegar al controlador final. Esto permite:
+
+- Autenticación
+- Logging (Coming soon)
+- CORS
+- Compresión
+- Limitación de tasa
+
+Ejemplo:
+
+<Code
+  lang="cpp"
+  code={`app.use(cors());
+app.use(rateLimit({ .max = 10 }));`}
+/>
+
+Cada middleware recibe `(Request&, Response&, Next)` y puede decidir continuar o cortar la ejecución.
+
+---
+
+## 🧭 3. Motor de Ruteo
+
+Zuno implementa un ruteador jerárquico que soporta:
+
+- Rutas estáticas (`/about`)
+- Rutas dinámicas (`/users/:id`)
+- Parámetros de consulta (`?q=valor`)
+- Agrupación modular de rutas
+
+El ruteador convierte la URL en una estructura de coincidencia eficiente y despacha al controlador correspondiente.
+
+---
+
+## 🧠 4. Controladores
+
+Los controladores son funciones lambda que manejan la lógica de negocio:
+
+<Code
+  lang="cpp"
+  code={`app.get("/saludo/:nombre", [](Request& req, Response& res) {
+  res.send("Hola, " + req.params["nombre"]);
+});`}
+/>
+
+Pueden devolver texto plano, JSON, archivos o cualquier tipo de respuesta personalizada.
+
+---
+
+## 📤 5. Respuesta HTTP
+
+Zuno abstrae la respuesta HTTP con una API fluida:
+
+<Code
+  lang="cpp"
+  code={`res.status(200).json({
+  { "mensaje", "Éxito" }
+});`}
+/>
+
+También puedes enviar archivos, redirecciones o encabezados personalizados.
+
+---
+
+## 🧱 Modularidad Interna
+
+Zuno está dividido en módulos reutilizables:
+
+| Módulo             | Función principal                          |
+|--------------------|--------------------------------------------|
+| `core/`            | Servidor, ruteo, tipos base                |
+| `extensions/`      | Middlewares opcionales (CORS, TLS, etc.)   |
+| `examples/`        | Casos de uso listos para compilar          |
+| `zuno/zuno.hpp`    | Punto de entrada unificado para el usuario |
+
+---
+
+## 🔐 Seguridad por Diseño
+
+Zuno promueve buenas prácticas de seguridad:
+
+- TLS nativo con certificados
+- Middleware de autenticación
+- Limitación de tasa configurable
+- Encabezados seguros por defecto
+
+---
+
+## 🧭 Próximos Pasos
+
+- Explora [cómo escribir middlewares personalizados](/es/guide/middleware)
+- Aprende sobre [TLS y seguridad](/es/guide/tls-security)
+- Revisa [la estructura del proyecto](/es/guide/project-structure)
+
+---
+
+Zuno combina simplicidad y potencia en una arquitectura moderna, pensada para desarrolladores que quieren control total sin sacrificar productividad.

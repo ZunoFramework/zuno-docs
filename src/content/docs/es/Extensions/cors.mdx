@@ -1,0 +1,114 @@
+---
+title: CORS
+description: Habilita CORS en tu servidor Zuno para permitir solicitudes desde otros orígenes.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🌐 CORS (Cross-Origin Resource Sharing)
+
+Este ejemplo muestra cómo habilitar CORS en tu servidor Zuno usando la extensión `cors`. Esto es esencial cuando tu frontend y backend están en dominios distintos, como en aplicaciones SPA o APIs públicas.
+
+---
+
+## 🧱 Estructura del Proyecto
+
+<Code
+  lang="text"
+  code={`cors-example/
+├── CMakeLists.txt
+└── main.cpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.20)
+project(cors_example)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(zuno)
+
+add_executable(cors-example main.cpp)
+target_link_libraries(cors-example PRIVATE zuno)`}
+/>
+
+---
+
+## 📄 `main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include <zuno/extensions/cors.hpp>
+
+int main() {
+  zuno::App app;
+
+  // Habilitar CORS con configuración por defecto
+  app.use(zuno::cors());
+
+  app.get("/datos", [](auto& req, auto& res) {
+    res.json({
+      { "mensaje", "CORS habilitado correctamente" }
+    });
+  });
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## ⚙️ Configuración Personalizada
+
+Puedes personalizar los encabezados permitidos, métodos y orígenes:
+
+<Code
+  lang="cpp"
+  code={`app.use(zuno::cors({
+  .origin = "*",
+  .methods = "GET, POST, OPTIONS",
+  .headers = "Content-Type, Authorization"
+}));`}
+/>
+
+---
+
+## 🧪 Probar con el Navegador
+
+Desde una aplicación frontend en otro origen (por ejemplo, `http://localhost:5173`), puedes hacer:
+
+<Code
+  lang="js"
+  code={`fetch("http://localhost:3000/datos")
+  .then(res => res.json())
+  .then(console.log);`}
+/>
+
+Si CORS está habilitado correctamente, no verás errores en la consola del navegador.
+
+---
+
+## 🧭 Próximos Pasos
+
+- Combina con [autenticación](/es/examples/authenticated-endpoint) para proteger rutas
+- Usa [TLS](/es/guide/tls-security) para asegurar las solicitudes
+- Agrega [limitación de tasa](/es/extensions/rate-limiting) para prevenir abuso
+
+---
+
+Zuno te permite habilitar CORS de forma segura y declarativa—sin necesidad de escribir encabezados manualmente.

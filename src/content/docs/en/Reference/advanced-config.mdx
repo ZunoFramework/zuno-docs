@@ -1,0 +1,69 @@
+---
+title: Advanced Configuration
+description: Explore advanced features of ZunoFramework for building modular and expressive web applications in C++.
+---
+import { Code } from '@astrojs/starlight/components'
+
+# ⚙️ Advanced Configuration
+
+ZunoFramework is a modern C++ web framework inspired by Express.js, designed to build fast, modular, and secure web applications. This page covers advanced configuration patterns, including per-route middleware composition, JSON/XML parsing, and serving HTML files.
+
+## 🧩 Middleware Composition per Route
+
+In Zuno, middleware functions are passed as an array of lambdas as the second argument to a route definition. The third argument is the final controller.
+
+<Code lang="cpp" code={`app.get("/dashboard", {
+    [](const zuno::Request& req, zuno::Response& res, zuno::Next next) {
+        zuno::log::info("[Auth] Verifying user session...");
+        next();
+    },
+    [](const zuno::Request& req, zuno::Response& res, zuno::Next next) {
+        zuno::log::info("[Logger] Requested path: {}", req.path());
+        next();
+    }
+}, [](const zuno::Request& req, zuno::Response& res) {
+    res.send("Welcome to the dashboard");
+});`} />
+
+You can reuse middleware arrays across multiple routes for consistency and modularity.
+
+## 🧪 JSON and XML Parsing
+
+Zuno provides built-in support for parsing JSON and XML request bodies.
+
+<Code lang="cpp" code={`app.post("/api/data", {}, [](const zuno::Request& req, zuno::Response& res) {
+    auto json = req.json();
+    std::string name = json["name"];
+    res.json({{"message", "Hello " + name}});
+});`} />
+
+<Code lang="cpp" code={`app.post("/api/xml", {}, [](const zuno::Request& req, zuno::Response& res) {
+    auto xml = req.xml();
+    std::string id = xml["user"]["@id"];
+    res.send("Received user with ID: " + id);
+});`} />
+
+## 🧱 Serving HTML Files
+
+Zuno allows you to send HTML files by simply specifying the file path. The framework handles reading the file and setting the appropriate content type automatically:
+
+<Code lang="cpp" code={`app.get("/", {}, [](const zuno::Request& req, zuno::Response& res) {
+    res.html("public/index.html");
+});`} />
+
+This makes it easy to serve static content without manually handling file streams.
+
+## 🔄 Coming Soon: WebSocket Support
+
+Zuno will soon support WebSockets via `app.ws()`:
+
+<Code lang="cpp" code={`// Planned API (not yet implemented)
+app.ws("/chat", [](const zuno::WebSocket& ws) {
+    ws.onMessage([](const std::string& msg) {
+        ws.send("Echo: " + msg);
+    });
+});`} />
+
+---
+
+Need help with a specific use case? Join the discussion on [GitHub](https://github.com/ZunoFramework/zuno/discussions) or check out the [Deployment Guide](/en/guides/deployment).

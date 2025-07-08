@@ -1,0 +1,100 @@
+---
+title: Compresión Brotli
+description: Habilita compresión Brotli en tu servidor Zuno para mejorar el rendimiento de carga.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🗜️ Compresión Brotli
+
+Este ejemplo muestra cómo habilitar compresión Brotli en tu servidor Zuno usando la extensión `compression`. Esto reduce el tamaño de las respuestas y mejora significativamente los tiempos de carga, especialmente para archivos estáticos o respuestas grandes.
+
+---
+
+## 🧱 Estructura del Proyecto
+
+<Code
+  lang="text"
+  code={`compression-example/
+├── CMakeLists.txt
+└── main.cpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.20)
+project(compression_example)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(zuno)
+
+add_executable(compression-example main.cpp)
+target_link_libraries(compression-example PRIVATE zuno)`}
+/>
+
+---
+
+## 📄 `main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include <zuno/extensions/compression.hpp>
+
+int main() {
+  zuno::App app;
+
+  // Habilitar compresión Brotli para todas las respuestas
+  app.use(zuno::compression());
+
+  app.get("/", [](auto& req, auto& res) {
+    res.send("Esta respuesta será comprimida si el cliente lo soporta.");
+  });
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## 🧪 Probar la Compresión
+
+Puedes verificar si la compresión está funcionando con `curl`:
+
+<Code
+  lang="bash"
+  code={`curl -H "Accept-Encoding: br" -I http://localhost:3000`}
+/>
+
+Deberías ver un encabezado como:
+
+<Code
+  lang="http"
+  code={`Content-Encoding: br`}
+/>
+
+---
+
+## 🧭 Próximos Pasos
+
+- Usa [archivos estáticos](/es/extensions/static-files) para servir contenido comprimido
+- Combina con [TLS](/es/guide/tls-security) para máxima eficiencia
+- Explora [middleware personalizado](/es/guide/middleware) para controlar qué rutas se comprimen
+
+---
+
+Zuno te permite optimizar el rendimiento sin complicaciones—solo activa la extensión y listo.

@@ -1,0 +1,152 @@
+---
+title: Zuno Architecture
+description: Explore the internal components of Zuno and how they work together to handle HTTP requests efficiently.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🧠 Zuno Architecture
+
+Zuno is designed as a modern, modular, high-performance HTTP framework for C++20. Its architecture is built around a middleware pipeline, an efficient routing engine, and direct integration with Asio for asynchronous operations.
+
+---
+
+## 🧩 Core Components
+
+<Code
+  lang="text"
+  code={`[HTTP Client]
+     │
+     ▼
+┌──────────────┐
+│   Server     │ ←— TCP socket (Asio)
+└──────────────┘
+     │
+     ▼
+┌────────────────────────────┐
+│     Middleware Pipeline    │
+└────────────────────────────┘
+     │
+     ▼
+┌────────────────────────────┐
+│        Routing Engine      │
+└────────────────────────────┘
+     │
+     ▼
+┌────────────────────────────┐
+│       Route Handler        │
+└────────────────────────────┘
+     │
+     ▼
+┌────────────────────────────┐
+│       HTTP Response        │
+└────────────────────────────┘`}
+/>
+
+---
+
+## ⚙️ 1. HTTP Server (Asio)
+
+Zuno uses [Asio](https://think-async.com/) as its networking backend to handle TCP connections efficiently and asynchronously. Each incoming connection is processed through an event loop without blocking threads.
+
+---
+
+## 🧵 2. Middleware Pipeline
+
+Every request flows through a chain of middleware before reaching the final handler. This enables:
+
+- Authentication
+- Logging
+- CORS
+- Compression
+- Rate limiting
+
+Example:
+
+<Code
+  lang="cpp"
+  code={`app.use(logging());
+app.use(cors());
+app.use(rateLimit({ .max = 10 }));`}
+/>
+
+Each middleware receives `(Request&, Response&, Next)` and can choose to continue or short-circuit the flow.
+
+---
+
+## 🧭 3. Routing Engine
+
+Zuno implements a hierarchical router that supports:
+
+- Static routes (`/about`)
+- Dynamic routes (`/users/:id`)
+- Query parameters (`?q=value`)
+- Modular route grouping
+
+The router maps the URL to an efficient match tree and dispatches to the appropriate handler.
+
+---
+
+## 🧠 4. Route Handlers
+
+Handlers are lambdas that implement your business logic:
+
+<Code
+  lang="cpp"
+  code={`app.get("/hello/:name", [](Request& req, Response& res) {
+  res.send("Hello, " + req.params["name"]);
+});`}
+/>
+
+They can return plain text, JSON, files, or any custom response.
+
+---
+
+## 📤 5. HTTP Response
+
+Zuno provides a fluent API for building responses:
+
+<Code
+  lang="cpp"
+  code={`res.status(200).json({
+  { "message", "Success" }
+});`}
+/>
+
+You can also send files, redirects, or custom headers.
+
+---
+
+## 🧱 Internal Modularity
+
+Zuno is organized into reusable modules:
+
+| Module            | Purpose                                      |
+|-------------------|----------------------------------------------|
+| `core/`           | Server, routing, base types                  |
+| `extensions/`     | Optional middleware (CORS, TLS, etc.)        |
+| `examples/`       | Ready-to-run use cases                       |
+| `zuno/zuno.hpp`   | Unified entry point for users                |
+
+---
+
+## 🔐 Secure by Design
+
+Zuno promotes secure defaults:
+
+- Native TLS support
+- Authentication middleware
+- Configurable rate limiting
+- Safe headers by default
+
+---
+
+## 🧭 What’s Next?
+
+- Learn how to [write custom middleware](/en/guide/middleware)
+- Explore [TLS & security](/en/guide/tls-security)
+- Review the [recommended project structure](/en/guide/project-structure)
+
+---
+
+Zuno combines simplicity and power in a modern architecture—built for developers who want full control without sacrificing productivity.

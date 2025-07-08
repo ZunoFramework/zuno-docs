@@ -1,0 +1,98 @@
+---
+title: What is Zuno?
+description: Discover the core principles, goals, and unique value of the Zuno Framework.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🦜 What is Zuno?
+
+**Zuno** is a modern, high-performance web framework for C++ developers who want the power of low-level control with the elegance of a modular, expressive API. Inspired by the simplicity of frameworks like Express.js, Zuno brings that developer-friendly experience to the C++ ecosystem—without compromising on speed, security, or scalability.
+
+---
+
+## 🚀 Why Zuno?
+
+Zuno was born from a simple idea: _C++ deserves a web framework that feels modern, intuitive, and fun to use._ While existing solutions often feel clunky or overly complex, Zuno is designed to be:
+
+- **Modular** – Compose your application with lightweight, reusable components.
+- **Secure** – Built-in TLS support and middleware for CORS, rate limiting, and more.
+- **Performant** – Powered by [Asio standalone](https://think-async.com/Asio/), Zuno delivers blazing-fast networking with minimal overhead.
+- **Developer-friendly** – Clean syntax, clear documentation, and a focus on DX (Developer Experience).
+
+---
+
+## 🧩 Core Concepts
+
+Zuno is built around a few key ideas:
+
+### 1. **Minimal by Default, Powerful by Design**
+
+You can start with a simple “Hello World” server in just a few lines of code. But as your app grows, Zuno scales with you—offering advanced features like TLS, middleware chaining, and modular routing.
+
+<Code lang="cpp" title='main.cpp' code={`#include <zuno/zuno.hpp>
+
+int main() {
+  zuno::App app;
+
+  app.get("/", [](auto& req, auto& res) {
+    res.send("Hello, Zuno!");
+  });
+
+  app.listen(3000);
+}`}/>
+
+### 2. **Middleware-Driven Architecture**
+
+Zuno uses a middleware pipeline to handle requests. This makes it easy to plug in features like compression, logging, or authentication—without cluttering your core logic.
+
+<Code lang="cpp" title='main.cpp' code={`app.use(cors());
+app.use(rateLimit());
+
+app.get("/hello", [](auto& req, auto& res) {
+  res.send("Hello, world!");
+});`} />
+
+### 3. **Built for Modern C++**
+
+Zuno embraces modern C++ standards (C++20 and above), using smart pointers, lambdas, and RAII to ensure safety and clarity.
+
+---
+
+## 🛠️ Use Cases
+
+Zuno is ideal for:
+
+- Building REST APIs with C++ backends
+- Creating secure microservices with TLS
+- Prototyping high-performance web apps
+- Learning modern C++ through real-world projects
+
+---
+
+## 🌐 How Zuno Compares
+
+| Feature             | Zuno            | Crow             | Pistache         |
+|---------------------|------------------|------------------|------------------|
+| TLS Support         | ✅ Built-in       | ⚠️ External setup | ⚠️ External setup |
+| Middleware System   | ✅ Modular        | ⚠️ Limited        | ⚠️ Limited        |
+| Express-style API   | ✅ Yes            | ❌ No             | ❌ No             |
+| Docs & DX Focus     | ✅ High           | ⚠️ Sparse         | ⚠️ Sparse         |
+
+> Zuno isn’t trying to replace existing C++ frameworks—it’s reimagining what they could be.
+
+---
+
+## 💡 The Vision
+
+Zuno is more than just a framework—it's a movement toward making C++ web development accessible, elegant, and exciting. Whether you're a systems programmer exploring web APIs or a backend engineer seeking performance without pain, Zuno is here to empower your creativity.
+
+---
+
+## 📚 Next Steps
+
+Ready to dive in? Head over to [Getting Started](/en/introduction/getting-started) to set up your first Zuno project in minutes.
+
+---
+
+Made with ❤️ and a parrot mascot.

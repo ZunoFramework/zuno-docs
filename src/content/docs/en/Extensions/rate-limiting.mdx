@@ -1,0 +1,95 @@
+---
+title: Rate Limiting
+description: Protect your API from abuse by limiting the number of requests per client.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🚦 Rate Limiting Extension
+
+Rate limiting helps you control how many requests a client can make in a given time window. This is essential for preventing abuse, brute-force attacks, and accidental overloads.
+
+Zuno includes a built-in rate limiting extension that tracks requests per IP and blocks excessive usage.
+
+---
+
+## ⚙️ Enabling Rate Limiting
+
+To enable rate limiting with default settings:
+
+<Code
+  lang="cpp"
+  code={`app.use(rateLimit());`}
+/>
+
+This will apply a sensible default policy (e.g. 100 requests per minute per IP).
+
+---
+
+## 🛠️ Custom Configuration
+
+You can customize the rate limiting behavior by passing an options object:
+
+<Code
+  lang="cpp"
+  code={`app.use(rateLimit({
+  60000,     // 1 minute
+  100,    // per IP
+}));`}
+/>
+
+### Available options:
+
+| Option        | Type     | Description                                      |
+|---------------|----------|--------------------------------------------------|
+| `intervalMs`    | `int`    | Time window in milliseconds                      |
+| `max` | `int`    | Max number of requests allowed per window        |
+
+---
+
+## 🧪 Example: Tighter Limits for Login Route
+
+You can apply rate limiting to specific routes:
+
+<Code
+  lang="cpp"
+  code={`app.post("/login", rateLimit({
+  .intervalMs = 30000,
+  .max = 5
+}), [](Request& req, Response& res) {
+  res.send("Login attempt");
+});`}
+/>
+
+This limits login attempts to 5 per 30 seconds per IP.
+
+---
+
+## 🔍 How It Works
+
+- Each client (typically identified by IP) gets a counter
+- The counter resets after the `intervalMs` period
+- If the client exceeds `max`, Zuno returns an error response;
+`
+---
+
+## 🧭 Best Practices
+
+- Use stricter limits on sensitive endpoints (e.g. `/login`, `/register`)
+- Combine with authentication and logging for better visibility
+- Return clear error messages to guide legitimate users
+- Monitor rate-limited traffic to detect abuse patterns
+
+---
+
+## 🧭 Next Steps
+
+Explore more extensions:
+
+- [Static Files](/en/extensions/static-files)
+- [Advanced Configuration](/en/reference/advanced-config)
+- [Extending Zuno](/en/reference/extending-zuno)
+
+---
+
+Zuno’s rate limiting extension helps you protect your app—without sacrificing performance or flexibility.

@@ -1,0 +1,96 @@
+---
+title: CORS
+description: Configure Cross-Origin Resource Sharing (CORS) in Zuno to control access from external origins.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🌐 CORS Extension
+
+CORS (Cross-Origin Resource Sharing) is a security feature implemented by browsers to restrict how web pages can make requests to a different domain. Zuno includes a built-in CORS extension to help you configure access rules for your API.
+
+---
+
+## ⚙️ Enabling CORS
+
+To enable CORS with default settings (allow all origins), use:
+
+<Code
+  lang="cpp"
+  code={`app.use(cors());`}
+/>
+
+This will:
+
+- Allow all origins (`*`)
+- Accept common HTTP methods (`GET`, `POST`, etc.)
+- Enable basic headers
+
+> ⚠️ This is fine for development, but not recommended for production.
+
+---
+
+## 🛠️ Custom Configuration
+
+You can customize the behavior by passing an options object:
+
+<Code
+  lang="cpp"
+  code={`app.use(cors({
+  "https://example.com",
+  "GET,POST",
+  "Content-Type,Authorization",
+}));`}
+/>
+
+### Available options:
+
+| Option       | Type     | Description                                      |
+|--------------|----------|--------------------------------------------------|
+| `origin`     | `string` | Allowed origin (e.g. `"https://example.com"`)    |
+| `methods`    | `string` | Allowed HTTP methods (comma-separated)           |
+| `headers`    | `string` | Allowed request headers                          |
+| `credentials`| `bool`   | Whether to allow cookies and credentials         |
+
+---
+
+## 🧪 Example: Restrict to Trusted Frontend
+
+<Code
+  lang="cpp"
+  code={`app.use(cors({
+  "https://frontend.myapp.com",
+  "GET,POST",
+}));`}
+/>
+
+This configuration allows only your frontend app to access the API and supports cookies or tokens.
+
+---
+
+## 🔍 Preflight Requests
+
+Zuno automatically handles `OPTIONS` preflight requests when CORS is enabled. You don’t need to define them manually.
+
+---
+
+## 🧭 Best Practices
+
+- Always restrict `origin` in production
+- Enable `credentials` only when needed
+- Avoid using `*` with `credentials: true` (not allowed by browsers)
+- Use HTTPS to prevent mixed-content issues
+
+---
+
+## 🧭 Next Steps
+
+Explore more extensions:
+
+- [Rate Limiting](/en/extensions/rate-limiting)
+- [Static Files](/en/extensions/static-files)
+- [Advanced Configuration](/en/reference/advanced-config)
+
+---
+
+Zuno’s CORS extension gives you fine-grained control over who can access your API—securely and effortlessly.

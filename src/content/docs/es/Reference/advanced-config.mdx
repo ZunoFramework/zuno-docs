@@ -1,0 +1,69 @@
+---
+title: Configuración Avanzada
+description: Explora las características avanzadas de ZunoFramework para construir aplicaciones web modulares y expresivas en C++.
+---
+import { Code } from '@astrojs/starlight/components'
+
+# ⚙️ Configuración Avanzada
+
+ZunoFramework es un framework web moderno en C++ inspirado en Express.js, diseñado para construir aplicaciones rápidas, modulares y seguras. Esta página cubre patrones de configuración avanzada, incluyendo composición de middlewares, análisis de JSON/XML y envío de archivos HTML.
+
+## 🧩 Composición de Middlewares por Ruta
+
+En Zuno, las funciones middleware se pasan como un arreglo de lambdas en el segundo argumento de la definición de ruta. El tercer argumento es el controlador final.
+
+<Code lang="cpp" code={`app.get("/dashboard", {
+    [](const zuno::Request& req, zuno::Response& res, zuno::Next next) {
+        zuno::log::info("[Auth] Verificando sesión del usuario...");
+        next();
+    },
+    [](const zuno::Request& req, zuno::Response& res, zuno::Next next) {
+        zuno::log::info("[Logger] Ruta solicitada: {}", req.path());
+        next();
+    }
+}, [](const zuno::Request& req, zuno::Response& res) {
+    res.send("Bienvenido al panel de control");
+});`} />
+
+Puedes reutilizar arreglos de middlewares en múltiples rutas para mantener consistencia.
+
+## 🧪 Análisis de JSON y XML
+
+Zuno incluye soporte integrado para analizar cuerpos de solicitud en formato JSON y XML.
+
+<Code lang="cpp" code={`app.post("/api/data", {}, [](const zuno::Request& req, zuno::Response& res) {
+    auto json = req.json();
+    std::string nombre = json["name"];
+    res.json({{"message", "Hola " + nombre}});
+});`} />
+
+<Code lang="cpp" code={`app.post("/api/xml", {}, [](const zuno::Request& req, zuno::Response& res) {
+    auto xml = req.xml();
+    std::string id = xml["user"]["@id"];
+    res.send("Usuario recibido con ID: " + id);
+});`} />
+
+## 🧱 Envío de Archivos HTML
+
+Zuno permite enviar archivos HTML directamente especificando la ruta del archivo. El framework se encarga de leer el contenido y establecer el tipo de contenido automáticamente:
+
+<Code lang="cpp" code={`app.get("/", {}, [](const zuno::Request& req, zuno::Response& res) {
+    res.html("public/index.html");
+});`} />
+
+Esto simplifica el manejo de contenido estático sin necesidad de manipular flujos de archivos manualmente.
+
+## 🔄 Próximamente: Soporte para WebSockets
+
+Zuno pronto incluirá soporte para WebSockets mediante `app.ws()`:
+
+<Code lang="cpp" code={`// API planeada (aún no implementada)
+app.ws("/chat", [](const zuno::WebSocket& ws) {
+    ws.onMessage([](const std::string& msg) {
+        ws.send("Eco: " + msg);
+    });
+});`} />
+
+---
+
+¿Necesitas ayuda con un caso específico? Únete a la conversación en [GitHub](https://github.com/zuno-framework/zuno/discussions) o consulta la [Guía de Despliegue](/es/guides/deployment).

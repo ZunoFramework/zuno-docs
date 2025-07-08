@@ -1,0 +1,122 @@
+---
+title: Embedded Frontend
+description: Serve a static frontend (HTML, CSS, JS) from your Zuno backend using the staticFiles extension.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🖼️ Embedded Frontend
+
+In this example, you’ll learn how to serve a static frontend—such as a Single Page Application (SPA)—directly from your Zuno backend. This is useful for:
+
+- Fullstack apps with a C++ backend and JS frontend
+- Admin panels or dashboards
+- Offline-capable UIs bundled with the server
+
+---
+
+## 🧱 Project Structure
+
+<Code
+  lang="text"
+  code={`embedded-frontend/
+├── CMakeLists.txt
+├── public/
+│   ├── index.html
+│   ├── app.js
+│   └── styles.css
+└── main.cpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.16)
+project(embedded_frontend)
+
+set(CMAKE_CXX_STANDARD 20)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/zuno-framework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(zuno)
+
+add_executable(embedded-frontend main.cpp)
+target_link_libraries(embedded-frontend PRIVATE zuno)`}
+/>
+
+---
+
+## 📄 `main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include <fstream>
+#include <sstream>
+
+int main() {
+  zuno::App app;
+
+  // Serve static frontend files (JS, CSS, images)
+  app.use(staticFiles("public"));
+
+  // Fallback route for SPAs
+  app.get("/*", [](Request& req, Response& res) {
+    res.html(zuno::readFile("./public/index.html"));
+  });
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## 📄 `public/index.html`
+
+<Code
+  lang="html"
+  title='index.html'
+  code={`<!DOCTYPE html>
+<html>
+  <head>
+    <title>Zuno Frontend</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <h1>Hello from Zuno Frontend</h1>
+    <script src="app.js"></script>
+  </body>
+</html>`}/>
+
+---
+
+## 🚀 Run the App
+
+<Code
+  lang="bash"
+  code={`cmake -B build
+cmake --build build
+./build/embedded-frontend`}/>
+
+Then visit [http://localhost:3000](http://localhost:3000) to see your frontend served by Zuno.
+
+---
+
+## 🧭 What’s Next?
+
+- Add [Brotli Compression](/en/extensions/compression) for faster delivery
+- Secure with [TLS](/en/guide/tls-security)
+- Combine with [Authenticated Routes](/en/examples/authenticated-endpoint)
+
+---
+
+Zuno lets you bundle your backend and frontend into a single, elegant binary—no Node.js required.

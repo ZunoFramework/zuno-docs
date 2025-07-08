@@ -1,0 +1,113 @@
+---
+title: Guía de Despliegue
+description: Aprende a desplegar aplicaciones ZunoFramework en entornos productivos usando CMake, TLS y gestión de procesos.
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🚀 Guía de Despliegue
+
+Desplegar una aplicación construida con ZunoFramework implica compilar tu código C++ con CMake, configurar TLS si es necesario, y ejecutar el binario resultante en un entorno seguro y confiable. Esta guía cubre los pasos esenciales para un despliegue listo para producción.
+
+## 🛠️ Compilación con CMake
+
+ZunoFramework se integra mediante `FetchContent` en CMake. Aquí tienes un ejemplo mínimo:
+
+<Code lang="cmake" code={`cmake_minimum_required(VERSION 3.20)
+project(MiAplicacionZuno)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_BUILD_TYPE Release)
+
+include(FetchContent)
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+FetchContent_MakeAvailable(zuno)
+
+add_executable(miapp main.cpp)
+target_link_libraries(miapp PRIVATE zuno)
+`} />
+
+Para compilar tu proyecto:
+
+<Code lang="bash" code={`mkdir -p build
+cd build
+cmake ..
+cmake --build . --config Release`} />
+
+Esto generará un binario optimizado (por ejemplo, `miapp`) listo para producción.
+
+## 🔐 Configuración de TLS
+
+Si tu aplicación utiliza `app.useTLS()`, asegúrate de que los archivos de certificado y clave estén presentes y sean legibles:
+
+<Code lang="cpp" code={`app.useTLS({
+    "certs/server.crt",
+    "certs/server.key"
+});`} />
+
+Recomendaciones para producción:
+- Usa certificados de una autoridad confiable (como Let's Encrypt).
+- Establece permisos seguros: `chmod 600` para claves privadas.
+- Evita rutas codificadas—considera usar archivos de configuración.
+
+## ⚠️ Configuración por Variables de Entorno (Planeado)
+
+El soporte para variables de entorno aún no está implementado en ZunoFramework. Por ahora, los valores de configuración como puertos, rutas o flags deben definirse directamente en el código o cargarse desde un archivo de configuración personalizado.
+
+En el futuro se podrá hacer algo como:
+
+<Code lang="bash" code={`# Aún no soportado
+export ZUNO_ENV=production
+export ZUNO_PORT=8080`} />
+
+Mantente atento a futuras versiones para esta funcionalidad.
+
+## 🧩 Ejecución como Servicio
+
+Para mantener tu aplicación corriendo en producción, puedes usar un gestor de procesos como `systemd`:
+
+<Code lang="ini" code={`# /etc/systemd/system/zuno-app.service
+[Unit]
+Description=Aplicación Web Zuno
+After=network.target
+
+[Service]
+ExecStart=/opt/zuno/miapp
+Restart=always
+User=www-data
+
+[Install]
+WantedBy=multi-user.target`} />
+
+Luego habilita e inicia el servicio:
+
+<Code lang="bash" code={`sudo systemctl enable zuno-app
+sudo systemctl start zuno-app`} />
+
+## 📈 Logs y Monitoreo
+
+Zuno incluye un sistema de logging integrado a través de `zuno::log`. En producción, puedes redirigir la salida a un archivo o integrarte con herramientas externas:
+
+<Code lang="bash" code={`./miapp >> /var/log/zuno.log 2>&1`} />
+
+También puedes integrarte con:
+- journald (vía systemd)
+- Fluent Bit o Logrotate
+- Prometheus (usando métricas personalizadas)
+
+## 🧪 Verificación de Salud
+
+Implementa una ruta simple para verificar el estado de la aplicación:
+
+<Code lang="cpp" code={`app.get("/health", {}, [](const zuno::Request& req, zuno::Response& res) {
+    res.json({{"status", "ok"}});
+});`} />
+
+Puedes usar esta ruta con balanceadores de carga o monitores de disponibilidad.
+
+---
+
+¿Necesitas ayuda con un entorno de despliegue específico? Únete a la conversación en [GitHub](https://github.com/ZunoFramework/zuno/discussions) o consulta la guía de [Configuración Avanzada](/es/reference/advanced-config).

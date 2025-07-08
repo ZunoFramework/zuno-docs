@@ -1,0 +1,111 @@
+---
+title: Project Structure
+description: Learn how to organize your Zuno project for clarity, modularity, and scalability.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🗂️ Project Structure
+
+Zuno is flexible—you can start with a single `main.cpp` file or scale up to a fully modular architecture. This guide shows you how to structure your project for clarity and maintainability.
+
+---
+
+## 🧪 Minimal Example
+
+Here’s the simplest possible Zuno project:
+
+<Code lang="text" code={`my-zuno-app/
+├── CMakeLists.txt
+└── main.cpp`} />
+
+This is great for quick experiments or learning the basics.
+
+---
+
+## 🧱 Recommended Structure
+
+For real-world projects, we recommend a modular layout:
+
+<Code lang="text" code={`my-zuno-app/
+├── CMakeLists.txt
+├── src/
+│   ├── main.cpp
+│   ├── routes/
+│   │   ├── index.cpp
+│   │   └── users.cpp
+│   ├── middleware/
+│   │   └── auth.cpp
+│   └── utils/
+│       └── logger.cpp
+├── cmake/
+│   └── dependencies.cmake
+├── include/
+│   └── my_zuno_app/
+│       ├── routes.hpp
+│       ├── middleware.hpp
+│       └── utils.hpp
+└── certs/
+    ├── cert.pem
+    └── key.pem
+`}/>
+
+---
+
+## 📁 Folder Breakdown
+
+### `src/`
+Contains all your application logic.
+
+- `main.cpp`: Entry point of your app.
+- `routes/`: Define route handlers here.
+- `middleware/`: Custom middleware functions.
+- `utils/`: Helper functions, logging, etc.
+
+### `include/`
+Public headers for your app. Useful for separating declarations and enabling reuse.
+
+### `cmake/`
+Contains CMake configuration files used for building the project. These files define how the project is compiled, linked, and managed across different platforms.
+
+### `certs/`
+Store TLS certificates and keys here if you're using HTTPS.
+
+---
+
+## 🧩 Example: Modular Route
+
+Here’s how you might define a route in `routes/index.cpp`:
+
+<Code lang="cpp" code={`#include <zuno/zuno.hpp>
+
+void registerIndexRoutes(zuno::App& app) {
+    app.get("/", [](auto& req, auto& res) {
+        res.send("Welcome to Zuno!");
+    });
+}`} />
+
+And in `main.cpp`:
+
+<Code lang="cpp" code={`#include <zuno/zuno.hpp>
+#include "routes.hpp"
+
+int main(){
+    zuno::App app;
+    registerIndexRoutes(app);
+    app.listen(3000);
+}`}/>
+
+---
+
+## 🧭 Next Steps
+
+Now that your project is structured, let’s dive into:
+
+- [Routing & Controllers](/en/guide/routing)
+- [Middleware System](/en/guide/middleware)
+- [TLS & Security](/en/guide/tls-security)
+
+---
+
+Keep your code clean, modular, and expressive. Zuno makes it easy.

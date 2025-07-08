@@ -1,0 +1,77 @@
+---
+title: 🖐️ Welcome to Zuno
+description: Build high-performance web apps in C++ with modular design, TLS support, and an expressive API.
+locale: en
+---
+
+import { Icon, Badge, LinkButton, Code } from '@astrojs/starlight/components';
+
+# <Icon name="rocket" /> Zuno Framework <Badge variant="tip" size='medium' text="Beta"/>
+
+**The modern C++ web framework you've been waiting for.**  
+Zuno combines the raw power of native code with the elegance of modern web development.  
+Build secure, modular, and lightning-fast applications — all in C++.
+
+<LinkButton href="/en/getting-started" icon="rocket" variant="primary">Get Started</LinkButton>
+
+---
+
+## ✨ Why Choose Zuno?
+
+- ⚡ <strong>Blazing Fast</strong>  
+  Powered by Asio standalone, Zuno delivers zero-overhead async performance that leaves traditional frameworks in the dust.
+
+- 🔐 <strong>Secure by Design</strong>  
+  TLS support is built-in from the ground up. No hacks. No wrappers. Just clean, native security.
+
+- 🧩 <strong>Expressive API</strong>  
+  Inspired by Express.js, Zuno gives you a clean, intuitive interface — but in modern C++.
+
+- 🛠️ <strong>Modular & Scalable</strong>  
+  Architect your app with reusable modules and scale effortlessly as your needs grow.
+
+- 📦 <strong>Lightweight & Portable</strong>  
+  No bloated dependencies. Just you, Asio, and the open road.
+
+---
+
+## 🧠 Built for Builders
+
+Whether you're crafting microservices, embedded systems, or full-stack web apps, Zuno gives you the tools to move fast and build with confidence.
+
+export const code = `
+#include <zuno/zuno.hpp>
+
+void main(){
+  zuno::App app;
+
+  app.get("/", [](auto req, auto res) {
+    res.send("Hello, world from Zuno!");
+  });
+
+  app.listen(3456);
+}
+`;
+
+<Code lang="cpp" code={code} title='main.cpp' />
+
+---
+
+## 📚 Explore the Docs
+
+- [🚀 Quickstart Guide](/getting-started) — Launch your first Zuno app in minutes.
+- [🏗️ Architecture Overview](/architecture) — Understand how Zuno is built and how to extend it.
+- [🔒 TLS Integration](/security/tls) — Secure your endpoints with native TLS.
+
+---
+
+## 💬 What Developers Are Saying
+
+> “Zuno gave us the performance of native code with the flexibility of a modern web framework. It’s a game-changer for C++ developers.”  
+> — <em>Elena M., Systems Engineer, Bogotá</em>
+
+---
+
+## 🔧 Ready to Build the Future in C++?
+
+<LinkButton href="/docs/getting-started" icon="rocket" variant="primary">Start with Zuno</LinkButton>

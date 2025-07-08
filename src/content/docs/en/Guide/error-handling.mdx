@@ -1,0 +1,106 @@
+---
+title: Error Handling
+description: Learn how to handle errors gracefully in Zuno using status codes, custom messages, and middleware.
+locale: en
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🧯 Error Handling
+
+Zuno gives you full control over how errors are handled—whether it's a missing route, a failed validation, or an unexpected exception. You can send custom responses, set status codes, and define global error middleware.
+
+---
+
+## ❌ Sending Error Responses
+
+You can send an error response from any route handler using `res.status()` and `res.send()`:
+
+<Code
+  lang="cpp"
+  code={`app.get("/protected", [](auto& req, auto& res) {
+  if (!req.headers.contains("Authorization")) {
+    res.status(401).send("Unauthorized");
+    return;
+  }
+
+  res.send("Welcome!");
+});`}
+/>
+
+---
+
+## 🔍 Handling Not Found (404)
+
+Zuno automatically returns a 404 if no route matches the request. You can override this with a fallback handler:
+
+<Code
+  lang="cpp"
+  code={`app.use([](auto& req, auto& res, auto next) {
+  res.status(404).send("Route not found");
+});`}
+/>
+
+---
+
+## 🧱 Global Error Middleware
+
+You can define a middleware to catch and handle errors across your app. This is useful for logging, masking internal errors, or returning consistent error formats.
+
+<Code
+  lang="cpp"
+  code={`Middleware errorHandler = [](auto& req, auto& res, auto next) {
+  try {
+    next(); // Run the next middleware or route
+  } catch (const std::exception& ex) {
+    res.status(500).send("Internal Server Error");
+    std::cerr << "Unhandled error: " << ex.what() << std::endl;
+  }
+};
+
+app.use(errorHandler);`}
+/>
+
+---
+
+## 🧪 Custom Error Pages
+
+You can return HTML or JSON depending on the client:
+
+<Code
+  lang="cpp"
+  code={`app.use([](auto& req, auto& res, auto next) {
+  res.status(404).json({{"error","Not Found"}});
+});`}
+/>
+
+Or return structured JSON for APIs:
+
+<Code
+  lang="cpp"
+  code={`res.status(400).json({
+  {"error", "Invalid input"}
+  {"code", 400}
+});`}
+/>
+
+---
+
+## 🧭 Best Practices
+
+- Always return meaningful status codes (e.g. 400, 401, 404, 500)
+- Avoid exposing internal error messages in production
+- Use global error middleware to centralize logging and response formatting
+- Provide consistent error structures for frontend or API clients
+
+---
+
+## 🧭 Next Steps
+
+Now that you can handle errors gracefully, explore:
+
+- [Static File Serving](/en/middleware/static-files)
+- [Extending Zuno](/en/reference/extending-zuno)
+
+---
+
+Zuno helps you fail gracefully—because great DX includes great error handling.

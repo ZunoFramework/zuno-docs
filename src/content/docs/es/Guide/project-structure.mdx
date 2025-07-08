@@ -1,0 +1,105 @@
+---
+title: Estructura del Proyecto
+description: Aprende cómo organizar tu aplicación Zuno para escalar de forma limpia y modular.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🧱 Estructura del Proyecto
+
+Zuno no impone una estructura rígida, pero aquí te mostramos una organización recomendada para mantener tu aplicación limpia, modular y fácil de escalar.
+
+---
+
+## 📁 Estructura Sugerida
+
+<Code
+  lang="text"
+  code={`mi-app/
+├── CMakeLists.txt
+├── include/
+│   └── routes/
+│       └── users.hpp
+├── src/
+│   ├── main.cpp
+│   └── routes/
+│       └── users.cpp
+├── public/
+│   └── index.html
+└── certs/
+    ├── cert.pem
+    └── key.pem`}
+/>
+
+---
+
+## 📂 Descripción de Carpetas
+
+| Carpeta       | Propósito                                                                 |
+|---------------|--------------------------------------------------------------------------|
+| `src/`        | Código fuente principal de la aplicación                                 |
+| `include/`    | Archivos de cabecera para rutas, utilidades o módulos                    |
+| `routes/`     | Agrupación lógica de endpoints (por ejemplo, `/users`, `/auth`, etc.)    |
+| `public/`     | Archivos estáticos como HTML, CSS, JS o imágenes                         |
+| `certs/`      | Certificados TLS para servidores HTTPS                                   |
+| `build/`      | Carpeta generada por CMake para compilar el proyecto                     |
+
+---
+
+## 📄 `main.cpp` modular
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include "routes/users.hpp"
+
+int main() {
+  zuno::App app;
+
+  registerUserRoutes(app);
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## 📄 `routes/users.hpp`
+
+<Code
+  lang="cpp"
+  code={`#pragma once
+#include <zuno/zuno.hpp>
+
+void registerUserRoutes(zuno::App& app);`}
+/>
+
+---
+
+## 📄 `routes/users.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include "routes/users.hpp"
+
+void registerUserRoutes(zuno::App& app) {
+  app.get("/users", [](Request& req, Response& res) {
+    res.json({
+      { "id", 1 },
+      { "name", "Alice" }
+    });
+  });
+}`}
+/>
+
+---
+
+## 🧭 Próximos Pasos
+
+- Aprende sobre [ruteo modular](/es/guide/routing)
+- Agrega [middleware personalizado](/es/guide/middleware)
+- Sirve [archivos estáticos](/es/extensions/static-files) desde la carpeta `public/`
+
+---
+
+Zuno te da la libertad de estructurar tu proyecto como prefieras—pero esta guía te ayudará a mantenerlo limpio y escalable desde el inicio.

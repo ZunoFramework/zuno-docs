@@ -1,0 +1,111 @@
+---
+title: Limitación de Tasa
+description: Protege tu servidor Zuno contra abuso habilitando límites de solicitudes por IP.
+locale: es
+---
+import { Code } from '@astrojs/starlight/components'
+
+# 🚦 Limitación de Tasa
+
+Este ejemplo muestra cómo usar la extensión `rateLimit` de Zuno para limitar la cantidad de solicitudes que un cliente puede hacer en un periodo de tiempo. Esto es útil para:
+
+- Prevenir ataques de denegación de servicio (DoS)
+- Proteger endpoints públicos
+- Controlar el uso de recursos
+
+---
+
+## 🧱 Estructura del Proyecto
+
+<Code
+  lang="text"
+  code={`rate-limit-example/
+├── CMakeLists.txt
+└── main.cpp`}
+/>
+
+---
+
+## 📄 `CMakeLists.txt`
+
+<Code
+  lang="cmake"
+  code={`cmake_minimum_required(VERSION 3.20)
+project(rate_limit_example)
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+
+FetchContent_Declare(
+  zuno
+  GIT_REPOSITORY https://github.com/ZunoFramework/zuno.git
+  GIT_TAG        main
+)
+
+FetchContent_MakeAvailable(zuno)
+
+add_executable(rate-limit-example main.cpp)
+target_link_libraries(rate-limit-example PRIVATE zuno)`}
+/>
+
+---
+
+## 📄 `main.cpp`
+
+<Code
+  lang="cpp"
+  code={`#include <zuno/zuno.hpp>
+#include <zuno/extensions/rate_limit.hpp>
+
+int main() {
+  zuno::App app;
+
+  // Permitir hasta 5 solicitudes por minuto por IP
+  app.use(zuno::rateLimit({
+    .intervalMs = 60'000,
+    .max = 5
+  }));
+
+  app.get("/", [](auto& req, auto& res) {
+    res.send("¡Bienvenido! No has excedido el límite de solicitudes.");
+  });
+
+  app.listen(3000);
+}`}
+/>
+
+---
+
+## ⚙️ Parámetros Disponibles
+
+| Opción     | Descripción                                      |
+|------------|--------------------------------------------------|
+| `intervalMs` | Duración de la ventana de tiempo en milisegundos |
+| `max`      | Máximo de solicitudes permitidas por ventana     |
+
+---
+
+## 🧪 Probar el Límite
+
+Puedes probarlo con un bucle en `curl`:
+
+<Code
+  lang="bash"
+  code={`for i in {1..6}; do curl -i http://localhost:3000; echo; done`}
+/>
+
+La sexta solicitud debería devolver un código `429 Too Many Requests`.
+
+---
+
+## 🧭 Próximos Pasos
+
+- Combina con [CORS](/es/extensions/cors) y [TLS](/es/guide/tls-security)
+- Usa [almacenamiento persistente](/es/guide/stateful-extensions) para límites distribuidos
+- Aplica límites por ruta o grupo de rutas
+
+---
+
+Zuno te permite proteger tus endpoints con límites inteligentes—sin complicaciones ni dependencias externas.
